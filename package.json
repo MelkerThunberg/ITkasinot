@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/MelkerThunberg/ITkasinot/issues"
   },
-  "homepage": "https://github.com/MelkerThunberg/ITkasinot#readme"
+  "homepage": "https://github.com/MelkerThunberg/ITkasinot#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
