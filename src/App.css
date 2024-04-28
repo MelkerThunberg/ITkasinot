@@ -1,0 +1,44 @@
+/* App.css */
+
+/* Styla länkarna som "böcker" */
+a {
+  text-decoration: none; /* Ta bort standard understrykning */
+  color: #FFFFFF; /* Vit färg för länktext */
+  font-weight: bold; /* Fetstil för tydlighet */
+  padding: 5px 10px; /* Justera storlek på länktextens område */
+  background-color: #2C3E50; /* Bakgrundsfärg för länkarna */
+  border-radius: 5px; /* Rundade kanter för en mjukare look */
+  margin: 0 10px; /* Justera avståndet mellan länkarna */
+  transition: background-color 0.3s ease; /* Gör övergången smidig */
+}
+
+a:hover {
+  background-color: #1A242F; /* Färgändring vid hovring för interaktivitet */
+}
+
+/* Styla hela sidan */
+body {
+  background-color: #0C1222; /* Bakgrundsfärg för hela sidan */
+  color: #FFFFFF; /* Textfärg för hela sidan */
+  font-family: Arial, sans-serif; /* Typsnitt för hela sidan */
+  margin: 0; /* Ta bort marginaler för att undvika extra utrymme */
+  padding: 0; /* Ta bort fyllning för att undvika extra utrymme */
+}
+
+/* Styla sidans innehåll */
+#root {
+  display: flex; /* Använd flexbox för att centrera innehållet */
+  justify-content: center; /* Centrera innehållet horisontellt */
+  align-items: center; /* Centrera innehållet vertikalt */
+  height: 100vh; /* Hela sidans höjd */
+}
+/* Använd flexbox för att göra länkarna horisontella */
+.link-container {
+    display: flex;
+    flex-direction: column; /* Lägg länkarna i en kolumn */
+    align-items: center; /* Centrera länkarna horisontellt */
+  }
+  
+  .link-container a {
+    margin: 5px; /* Lägg till lite utrymme mellan länkarna */
+  }
