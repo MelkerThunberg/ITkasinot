@@ -16,6 +16,10 @@ export default function Home() {
 
             <Link to="/caseUnbox">Öppna lådor</Link>
 
+            <Link to="/roulette">Roulette</Link>
+
+            <Link to="/plinko">Plinko</Link>
+
         </div>
     )
 }
