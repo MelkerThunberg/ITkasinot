@@ -14,6 +14,8 @@ export default function Home() {
 
             <Link to="/dailybonus">Daglig Bonus</Link>
 
+            <Link to="/caseUnbox">Öppna lådor</Link>
+
         </div>
     )
 }

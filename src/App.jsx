@@ -5,6 +5,7 @@ import Home from "./Pages/home";
 import Blackjack from "./Pages/blackjack";
 import Coinflip from "./Pages/coinflip";
 import Dailybonus from "./Pages/dailybonus";
+import CaseUnbox from "./Pages/caseUnbox";
 
 
     function App() {
@@ -16,6 +17,7 @@ import Dailybonus from "./Pages/dailybonus";
                 <Route path="/blackjack" element={<Blackjack />} />
                 <Route path="/coinflip" element={<Coinflip />} />
                 <Route path="/dailybonus" element={<Dailybonus />} />
+                <Route path="/caseUnbox" element={<CaseUnbox />} />
             </Routes>
         </Router>
     )
