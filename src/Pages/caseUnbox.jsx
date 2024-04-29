@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import  { useState } from 'react';
 
 export default function CaseOpening() {
     const [saldo, setSaldo] = useState(100); // State for the player's balance
@@ -43,7 +43,6 @@ export default function CaseOpening() {
                 updatedSaldo += finalReward.amount; // Update balance with the reward value
 
                 // Update reward message and result text for the player
-                setRewardText(finalReward.text);
                 setResult(finalReward.text);
                 setSaldo(updatedSaldo); // Update balance with the new balance after the player gets the reward
                 setIsRunning(false); // Set isRunning to false when the game is finished
@@ -53,7 +52,6 @@ export default function CaseOpening() {
 
      // State for reward and reward message
     const [reward, setReward] = useState('');
-    const [rewardText, setRewardText] = useState('');
     const [result, setResult] = useState('');
 
     return (
