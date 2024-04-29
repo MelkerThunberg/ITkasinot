@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
 
 export default function CaseOpening() {
-    const [saldo, setSaldo] = useState(100); 
-    const [isRunning, setIsRunning] = useState(false); 
+    const [saldo, setSaldo] = useState(100); // State for the player's balance
+    const [isRunning, setIsRunning] = useState(false); // State to keep track of whether the game is running
+
+    // A list of different rewards with their names, values, and messages to the player
     const rewards = [
         { name: '$10', amount: 10, text: 'Your drop: $10.' },
         { name: '$20', amount: 20, text: 'Your drop: $20.' },
@@ -13,48 +15,52 @@ export default function CaseOpening() {
         { name: '$0', amount: 0, text: 'Your drop: $0' },
     ];
 
+    // Function to open the case and choose a random reward
     const openCase = () => {
-        if (isRunning) return; 
+        if (isRunning) return; // If the game is already running, exit the function
 
         if (saldo < 10) {
-            alert("Insufficient funds!");
+            alert("Insufficient funds!"); // Show a warning if the player doesn't have enough money
             return;
         }
 
-        setIsRunning(true); 
+        setIsRunning(true); // Set isRunning to true when the game starts
 
-        let updatedSaldo = saldo - 10;
+        let updatedSaldo = saldo - 10; // Update balance after the player opens the case
 
-        let spinCount = 0;
+        let spinCount = 0; // Counter for the number of spins
         let spinInterval = setInterval(() => {
-            const randomIndex = Math.floor(Math.random() * rewards.length);
+            const randomIndex = Math.floor(Math.random() * rewards.length); // Choose a random reward
             const reward = rewards[randomIndex];
-            setReward(reward.name);
+            setReward(reward.name); // Update the reward shown to the player
             spinCount++;
 
-            if (spinCount > 10) {
-                clearInterval(spinInterval);
+            if (spinCount > 10) { // When spin count reaches 10
+                clearInterval(spinInterval); // Stop the interval to end the animation
 
+                // Find the final reward based on the selected reward name
                 const finalReward = rewards.find(r => r.name === reward.name); 
-                updatedSaldo += finalReward.amount;
+                updatedSaldo += finalReward.amount; // Update balance with the reward value
 
+                // Update reward message and result text for the player
                 setRewardText(finalReward.text);
                 setResult(finalReward.text);
-                setSaldo(updatedSaldo);
-                setIsRunning(false); 
+                setSaldo(updatedSaldo); // Update balance with the new balance after the player gets the reward
+                setIsRunning(false); // Set isRunning to false when the game is finished
             }
-        }, 200);
+        }, 200); // Animation lasts for 200 milliseconds
     };
 
+     // State for reward and reward message
     const [reward, setReward] = useState('');
     const [rewardText, setRewardText] = useState('');
     const [result, setResult] = useState('');
 
     return (
         <div>
-            <h1>Case Opening Game</h1>
-            <p>Saldo: $<span id="saldo">{saldo}</span> </p>
-            <button onClick={openCase}>Öppna case ($10)</button>
+            <h1>Case Opening</h1>
+            <p>Balance: $<span id="saldo">{saldo}</span> </p>
+            <button onClick={openCase}>Open Case ($10)</button>
             <div id="case">
                 <div id="reward">{reward}</div>
             </div>
