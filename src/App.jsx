@@ -1,13 +1,13 @@
 import "./App.css"
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
-import Home from "./pages/home";
-import Blackjack from "./pages/blackjack";
-import Coinflip from "./pages/coinflip";
-import Dailybonus from "./pages/dailybonus";
-import CaseUnbox from "./pages/caseUnbox";
-import Plinko from "./pages/plinko";
-import Roulette from "./pages/roulette";
+import Home from "./Pages/home";
+import Blackjack from "./Pages/blackjack";
+import Coinflip from "./Pages/coinflip";
+import Dailybonus from "./Pages/dailybonus";
+import CaseUnbox from "./Pages/caseUnbox";
+import Plinko from "./Pages/plinko";
+import Roulette from "./Pages/roulette";
 
 
     function App() {
