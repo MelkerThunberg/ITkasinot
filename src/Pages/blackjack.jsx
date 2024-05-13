@@ -67,6 +67,11 @@ export default function Blackjack() {
   const [playerImageHand, setPlayerImageHand] = useState([]);
   const [hiddenDealerCardImage, setHiddenDealerCardImage] = useState();
   const [gameOver, setGameOver] = useState(false);
+
+  // Ace calculation test
+  const [playerAceCount, setPlayerAceCount] = useState(0);
+  const [dealerAceCount, setDealerAceCount] = useState(0);
+
   const [deck, setDeck] = useState([
     { value: "2♥︎", image: card2Hearts },
     { value: "3♥︎", image: card3Hearts },
@@ -125,14 +130,6 @@ export default function Blackjack() {
   const countCardValue = (card /*, currentScore*/) => {
     const value = card.value;
 
-    /*
-    if ((value === "A♥︎" || value === "A♠︎" || value === "A♣︎" || value === "A♦︎") && currentScore + 11 <= 21) {
-      return 11;
-    }
-    if ((value === "A♥︎" || value === "A♠︎" || value === "A♣︎" || value === "A♦︎") && currentScore + 11 > 21) {
-      return 1;
-    }
-    */
     if (
       value === "A♥︎" ||
       value === "A♠︎" ||
@@ -227,6 +224,19 @@ export default function Blackjack() {
     }
   };
 
+  const reducePlayerAce = (playerScore,playerAceCount) => {
+    while (playerScore > 21 && playerAceCount > 0) {
+      setPlayerScore(playerScore - 10);
+      setPlayerAceCount(playerAceCount - 1);
+  }
+  }
+  const reduceDealerAce = (dealerScore,dealerAceCount) => {
+    while (dealerScore > 21 && dealerAceCount > 0) {
+      setDealerScore(dealerScore - 10);
+      setDealerAceCount(dealerAceCount - 1);
+  }
+  }
+
   const dealDeck = (array) => {
     let random = Math.floor(Math.random() * array.length);
     let card = array[random];
@@ -249,6 +259,30 @@ export default function Blackjack() {
     const playerCard2 = dealDeck([...deck]);
     const dealerCard2 = dealDeck([...deck]);
 
+    if (
+      playerCard1.card === "A♠︎" ||
+      playerCard1.card === "A♣︎" ||
+      playerCard1.card === "A♦︎" ||
+      playerCard1.card === "A♥︎" ||
+      playerCard2.card === "A♠︎" ||
+      playerCard2.card === "A♣︎" ||
+      playerCard2.card === "A♦︎" ||
+      playerCard2.card === "A♥︎"
+    ) {
+      setPlayerAceCount(playerAceCount + 1);
+    }
+    if (
+      dealerCard1.card === "A♠︎" ||
+      dealerCard1.card === "A♣︎" ||
+      dealerCard1.card === "A♦︎" ||
+      dealerCard1.card === "A♥︎" ||
+      dealerCard2.card === "A♠︎" ||
+      dealerCard2.card === "A♣︎" ||
+      dealerCard2.card === "A♦︎" ||
+      dealerCard2.card === "A♥︎"
+    ) {
+      setDealerAceCount(dealerAceCount + 1);
+    }
     const playerScore = playerCard1.cardValue + playerCard2.cardValue;
     const dealerScore = dealerCard1.cardValue + dealerCard2.cardValue;
     const dealerImage = dealerCard1.image;
@@ -290,6 +324,8 @@ export default function Blackjack() {
     console.log(newScore);
 
     setPlayerImageHand([...playerImageHand, newCard.image]);
+
+    reducePlayerAce();
 
     if (newScore > 21) {
       setMessage("Player busts! Dealer wins!");
@@ -342,11 +378,15 @@ export default function Blackjack() {
       <div className="content-container-blackjack">
         <div className="button-container">
           <button onClick={dealCards}>Deal Cards</button>
-          <button onClick={hit} disabled={gameOver}>Hit</button>
-          <button onClick={stand} disabled={gameOver}>Stand</button>
+          <button onClick={hit} disabled={gameOver}>
+            Hit
+          </button>
+          <button onClick={stand} disabled={gameOver}>
+            Stand
+          </button>
         </div>
         <div>
-          <h2 id="player-hand">Player Hand: {playerScore}</h2>
+          <h2 id="player-hand">Player Hand: {playerScore} :: {playerAceCount}</h2>
           <div className="card-container">
             {playerImageHand.map((image, index) => (
               <div key={index} className="card">
@@ -356,7 +396,7 @@ export default function Blackjack() {
           </div>
         </div>
         <div>
-          <h2 id="dealer-hand">Dealer Hand: {dealerScore}</h2>
+          <h2 id="dealer-hand">Dealer Hand: {dealerScore} :: {dealerAceCount}</h2>
           <div className="card-container">
             {dealerImageHand.map((image, index) => (
               <div key={index} className="card">
@@ -367,7 +407,11 @@ export default function Blackjack() {
         </div>
         <div className="message-container">
           <p>{message}</p>
-          {message && <button onClick={dealCards} id="deal-again">Deal Again</button>}
+          {message && (
+            <button onClick={dealCards} id="deal-again">
+              Deal Again
+            </button>
+          )}
         </div>
       </div>
     </div>
