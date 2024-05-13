@@ -1,32 +1,58 @@
+.navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Sätt ett högt z-index för att se till att den ligger över annat innehåll */
+}
+
 .navbar {
-    background-color: #2C3E50;
-    color: #fff;
-    padding: 10px 0;
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between; /* För att separera länkarna från balansdelen */
+  align-items: center; /* För att centrera innehållet vertikalt */
 }
 
 .navbar h1 {
-    margin: 0;
-    font-size: 24px;
+  margin: 0;
+  font-size: 24px;
 }
 
 .navbar-links {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 .navbar-links li {
-    display: inline;
-    margin-right: 10px;
+  display: inline;
+  margin-right: 10px;
 }
 
 .navbar-links li a {
-    color: #fff;
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 5px;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 5px;
 }
 
 .navbar-links li a:hover {
-    background-color: #555;
+  background-color: #555;
+}
+
+.balance {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.3
+  ); /* En lite mörkare färg med en delvis genomskinlig bakgrund */
+  color: #fff;
+  font-size: 16px;
+  padding: 5px 10px; /* Justera fyllning för att öka visuell separation */
+  border-radius: 5px; /* Runda hörn för en mjukare look */
+  margin-left: auto; /* Detta kommer att placera balansdelen längst till höger */
+  margin-right: 15px; /* Justera marginalen från höger för att ge lite utrymme */
 }

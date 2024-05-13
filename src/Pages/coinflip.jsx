@@ -1,10 +1,12 @@
-
+import Navbar from "../components/navbar.jsx";
 
 export default function Coinflip() {
-
-    return (
-        <div>
-            <h1>coinflip</h1>
-        </div>
-    )
+  return (
+    <div>
+      <div>
+        <Navbar />
+      </div>
+      <h1>coinflip</h1>
+    </div>
+  );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"
-import "./blackjack.css"
+import { Link } from "react-router-dom";
+import "../Styles/blackjack.css";
+import Navbar from "../components/navbar.jsx";
 
 import card2Clubs from "../../resources/English_pattern_2_of_clubs.svg.png";
 import card2Diamonds from "../../resources/English_pattern_2_of_diamonds.svg.png";
@@ -64,7 +65,7 @@ export default function Blackjack() {
   const [hiddenDealerCardValue, setHiddenDealerCardValue] = useState(0);
   const [message, setMessage] = useState("");
   const [dealerImageHand, setDealerImageHand] = useState([]);
-  const [playerImageHand, setPlayerImageHand] = useState([])
+  const [playerImageHand, setPlayerImageHand] = useState([]);
   const [hiddenDealerCardImage, setHiddenDealerCardImage] = useState();
   const [deck, setDeck] = useState([
     { value: "2♥︎", image: card2Hearts },
@@ -120,20 +121,7 @@ export default function Blackjack() {
     { value: "K♦︎", image: cardKingDiamonds },
     { value: "A♦︎", image: cardAceDiamonds },
   ]);
-  /*
-    "2♥︎", "3♥︎", "4♥︎", "5♥︎", "6♥︎", "7♥︎", "8♥︎", "9♥︎", "10♥︎", "J♥︎", "Q♥︎", "K♥︎", "A♥︎",
-    "2♠︎", "3♠︎", "4♠︎", "5♠︎", "6♠︎", "7♠︎", "8♠︎", "9♠︎", "10♠︎", "J♠︎", "Q♠︎", "K♠︎", "A♠︎",
-    "2♣︎", "3♣︎", "4♣︎", "5♣︎", "6♣︎", "7♣︎", "8♣︎", "9♣︎", "10♣︎", "J♣︎", "Q♣︎", "K♣︎", "A♣︎",
-    "2♦︎", "3♦︎", "4♦︎", "5♦︎", "6♦︎", "7♦︎", "8♦︎", "9♦︎", "10♦︎", "J♦︎", "Q♦︎", "K♦︎", "A♦︎"
-  ]);
-  */
-  /*
-  useEffect(() => {
-    // This effect will run whenever dealerHand or dealerScore changes
-    console.log("Dealer Hand:", dealerHand);
-    console.log("Dealer Score:", dealerScore);
-  }, [dealerHand, dealerScore]);
-*/
+
   const countCardValue = (card /*, currentScore*/) => {
     const value = card.value;
 
@@ -145,7 +133,12 @@ export default function Blackjack() {
       return 1;
     }
     */
-    if (value === "A♥︎" || value === "A♠︎" || value === "A♣︎" || value === "A♦︎") {
+    if (
+      value === "A♥︎" ||
+      value === "A♠︎" ||
+      value === "A♣︎" ||
+      value === "A♦︎"
+    ) {
       // Om värdet på ess plus den nuvarande poängen överstiger 21, sätt värdet på esset till 1, annars sätt det till 11
       return currentScore + 11 <= 21 ? 11 : 1;
     }
@@ -260,8 +253,7 @@ export default function Blackjack() {
   const showhiddenDealerCard = () => {
     setDealerHand([...dealerHand, hiddenDealerCard]);
     setDealerScore(dealerScore + hiddenDealerCardValue);
-    setDealerImageHand([...dealerImageHand, hiddenDealerCardImage])
-
+    setDealerImageHand([...dealerImageHand, hiddenDealerCardImage]);
   };
 
   const dealCards = () => {
@@ -273,7 +265,7 @@ export default function Blackjack() {
     const playerScore = playerCard1.cardValue + playerCard2.cardValue;
     const dealerScore = dealerCard1.cardValue + dealerCard2.cardValue;
     const dealerImage = dealerCard1.image;
-    const playerImage = [playerCard1.image, playerCard2.image]
+    const playerImage = [playerCard1.image, playerCard2.image];
 
     setPlayerHand([playerCard1.card, playerCard2.card]);
     setPlayerScore(playerScore);
@@ -285,7 +277,7 @@ export default function Blackjack() {
 
     setHiddenDealerCard(dealerCard2.card);
     setHiddenDealerCardValue(dealerCard2.cardValue);
-    setHiddenDealerCardImage(dealerCard2.image)
+    setHiddenDealerCardImage(dealerCard2.image);
     setMessage("");
 
     if (playerScore === 21) {
@@ -306,8 +298,7 @@ export default function Blackjack() {
     setPlayerScore(newScore);
     console.log(newScore);
 
-    setPlayerImageHand([...playerImageHand, newCard.image])
-
+    setPlayerImageHand([...playerImageHand, newCard.image]);
 
     if (newScore > 21) {
       setMessage("Player busts! Dealer wins!");
@@ -329,9 +320,9 @@ export default function Blackjack() {
     while (newScore < 17 || (newScore < playerScore && newScore <= 21)) {
       const newCard = dealDeck(deck);
       updatedDealerHand.push(newCard.card);
-      updatedDealerHandImage.push(newCard.image)
+      updatedDealerHandImage.push(newCard.image);
       setDealerHand(updatedDealerHand);
-      setDealerImageHand(updatedDealerHandImage)
+      setDealerImageHand(updatedDealerHandImage);
 
       newScore += newCard.cardValue;
     }
@@ -350,43 +341,38 @@ export default function Blackjack() {
   };
 
   return (
-
-    <div className="content-container-blackjack">
-      <button onClick={dealCards}>Deal Cards</button>
-      <button onClick={hit}>Hit</button>
-      <button onClick={stand}>Stand</button>
-      <br />
-      <Link to="/">BlackJack</Link>
-      <div>
-        <h2>Player Hand: {playerScore}</h2>
-        <div className="card-container">
-          {playerImageHand.map((image, index) => (
-            <div key={index} className="card">
-              <img
-                src={image}
-                style={{ width: "100px" }}
-              />
-            </div>
-          ))}
+    <div>
+      <Navbar />
+      <div className="content-container-blackjack">
+        <button onClick={dealCards}>Deal Cards</button>
+        <button onClick={hit}>Hit</button>
+        <button onClick={stand}>Stand</button>
+        <br />
+        <Link to="/">BlackJack</Link>
+        <div>
+          <h2>Player Hand: {playerScore}</h2>
+          <div className="card-container">
+            {playerImageHand.map((image, index) => (
+              <div key={index} className="card">
+                <img src={image} style={{ width: "100px" }} />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      <div>
-        <h2>Dealer Hand: {dealerScore}</h2>
-        <div className="card-container">
-          {dealerImageHand.map((image, index) => (
-            <div key={index} className="card">
-              <img
-                src={image}
-                style={{ width: "100px" }}
-              />
-            </div>
-          ))}
+        <div>
+          <h2>Dealer Hand: {dealerScore}</h2>
+          <div className="card-container">
+            {dealerImageHand.map((image, index) => (
+              <div key={index} className="card">
+                <img src={image} style={{ width: "100px" }} />
+              </div>
+            ))}
+          </div>
         </div>
-
-      </div>
-      <div>
-        <p>{message}</p>
-        {message && <button onClick={dealCards}>Deal Again</button>}
+        <div>
+          <p>{message}</p>
+          {message && <button onClick={dealCards}>Deal Again</button>}
+        </div>
       </div>
     </div>
   );

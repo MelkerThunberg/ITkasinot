@@ -2,13 +2,12 @@
 
 /* CSS for entire site */
 body {
-  background-color: #0C1222;
-  color: #FFFFFF;
+  background-color: #0c1222;
+  color: #ffffff;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
 }
-
 
 /* Eliah CSS Case Opening */
 #result {
@@ -50,4 +49,3 @@ body {
 #rewardText {
   display: none;
 }
-
