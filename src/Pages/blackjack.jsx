@@ -61,6 +61,9 @@ export default function Blackjack() {
   const [dealerScore, setDealerScore] = useState(0);
   const [hiddenDealerCardValue, setHiddenDealerCardValue] = useState(0);
   const [message, setMessage] = useState("");
+  const [dealerImageHand, setDealerImageHand] = useState([]);
+  const [playerImageHand, setPlayerImageHand] = useState([])
+  const [hiddenDealerCardImage, setHiddenDealerCardImage] = useState();
   const [deck, setDeck] = useState([
     { value: "2♥︎", image: card2Hearts },
     { value: "3♥︎", image: card3Hearts },
@@ -242,7 +245,7 @@ export default function Blackjack() {
     let random = Math.floor(Math.random() * array.length);
     let card = array[random];
     array.splice(random, 1);
-    console.log(card);
+    console.log("ddddddd" + card.image);
     let cardValue = countCardValue(card);
     console.log(cardValue);
     return { card: card.value, cardValue: cardValue, image: card.image };
@@ -251,6 +254,8 @@ export default function Blackjack() {
   const showhiddenDealerCard = () => {
     setDealerHand([...dealerHand, hiddenDealerCard]);
     setDealerScore(dealerScore + hiddenDealerCardValue);
+    setDealerImageHand([...dealerImageHand, hiddenDealerCardImage])
+
   };
 
   const dealCards = () => {
@@ -261,15 +266,20 @@ export default function Blackjack() {
 
     const playerScore = playerCard1.cardValue + playerCard2.cardValue;
     const dealerScore = dealerCard1.cardValue + dealerCard2.cardValue;
+    const dealerImage = dealerCard1.image;
+    const playerImage = [playerCard1.image, playerCard2.image]
 
     setPlayerHand([playerCard1.card, playerCard2.card]);
     setPlayerScore(playerScore);
+    setPlayerImageHand(playerImage);
 
     setDealerHand([dealerCard1.card]);
     setDealerScore(dealerCard1.cardValue);
+    setDealerImageHand([dealerImage]);
 
     setHiddenDealerCard(dealerCard2.card);
     setHiddenDealerCardValue(dealerCard2.cardValue);
+    setHiddenDealerCardImage(dealerCard2.image)
     setMessage("");
 
     if (playerScore === 21) {
@@ -290,6 +300,7 @@ export default function Blackjack() {
     setPlayerScore(newScore);
     console.log(newScore);
 
+
     if (newScore > 21) {
       setMessage("Player busts! Dealer wins!");
       // Ta bort insatsen
@@ -305,16 +316,19 @@ export default function Blackjack() {
     let newScore = dealerScore;
 
     const updatedDealerHand = [...dealerHand];
+    const updatedDealerHandImage = [...dealerImageHand];
 
     while (newScore < 17 || (newScore < playerScore && newScore <= 21)) {
       const newCard = dealDeck(deck);
-      updatedDealerHand.push(newCard.card); // Update the copy of dealerHand
-      setDealerHand(updatedDealerHand); // Uppdatera dealerns hand
+      updatedDealerHand.push(newCard.card);
+      updatedDealerHandImage.push(newCard.image)
+      setDealerHand(updatedDealerHand);
+      setDealerImageHand(updatedDealerHandImage)
 
-      newScore += newCard.cardValue; // Update newScore correctly
+      newScore += newCard.cardValue;
     }
-    setDealerHand(updatedDealerHand); // Update dealerHand with the new cards
-    setDealerScore(newScore); // Update dealerScore
+    setDealerHand(updatedDealerHand);
+    setDealerScore(newScore);
 
     if (newScore > 21) {
       setMessage("Dealer busts! Player wins!");
@@ -335,31 +349,35 @@ export default function Blackjack() {
 
       <div>
         <h2>Player Hand: {playerScore}</h2>
-        {playerHand.map((card, index) => (
-          <div key={index}>
-            <span style={{ marginRight: "10px" }}>{card}</span>
-            <img src={card} alt={card} style={{ marginRight: "10px" }} />
-          </div>
-        ))}
+        <div className="card-container">
+          {playerImageHand.map((image, index) => (
+            <div key={index} className="card">
+              <img
+                src={image}
+                style={{ width: "100px" }}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <div>
         <h2>Dealer Hand: {dealerScore}</h2>
-        {dealerHand.map((card, index) => (
-          <div key={index}>
-            <span style={{ marginRight: "10px" }}>{card}</span>
-            <img
-              src={card.image}
-              alt={card.value}
-              style={{ marginRight: "10px" }}
-            />
-          </div>
-        ))}
+        <div className="card-container">
+          {dealerImageHand.map((image, index) => (
+            <div key={index} className="card">
+              <img
+                src={image}
+                style={{ width: "100px" }}
+              />
+            </div>
+          ))}
+        </div>
+
       </div>
       <div>
         <p>{message}</p>
         {message && <button onClick={dealCards}>Deal Again</button>}
       </div>
-      <img src={cardAceDiamonds} alt="A♦︎" style={{ width: "100px" }} />
     </div>
   );
 }

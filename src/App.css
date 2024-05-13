@@ -83,3 +83,16 @@ body {
 #rewardText {
     display: none;
 }
+
+/*Blackjack*/
+.sideways {
+  transform: rotate(90deg);
+}
+
+.card-container {
+  display: flex;
+}
+
+.card {
+  margin-right: 10px;
+}
