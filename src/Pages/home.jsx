@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom" 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "../components/navbar";
+import Navbar from "../Components/navbar.jsx";
 import "./home.css"
 
 export default function Home() {
