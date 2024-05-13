@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom" 
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "../components/navbar";
+import "./home.css"
 
 export default function Home() {
 
     return (
+        <div>
+        <div>
+        <Navbar /> {/* Använd Navbar-komponenten här */}
+        </div>
         <div class="content-container-homepage">
         <div class="homepage-links">
             <h1>Välkommen till ItKasinot</h1>
@@ -21,6 +27,7 @@ export default function Home() {
 
             <Link to="/plinko">Plinko</Link>
             </div>
+        </div>
         </div>
     )
 }

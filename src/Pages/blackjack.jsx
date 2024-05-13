@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
-
+import "./blackjack.css"
 
 import card2Clubs from "../../resources/English_pattern_2_of_clubs.svg.png";
 import card2Diamonds from "../../resources/English_pattern_2_of_diamonds.svg.png";
@@ -350,7 +350,8 @@ export default function Blackjack() {
   };
 
   return (
-    <div>
+
+    <div className="content-container-blackjack">
       <button onClick={dealCards}>Deal Cards</button>
       <button onClick={hit}>Hit</button>
       <button onClick={stand}>Stand</button>
