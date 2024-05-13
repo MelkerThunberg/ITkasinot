@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"
+
 
 import card2Clubs from "../../resources/English_pattern_2_of_clubs.svg.png";
 import card2Diamonds from "../../resources/English_pattern_2_of_diamonds.svg.png";
@@ -143,6 +145,10 @@ export default function Blackjack() {
       return 1;
     }
     */
+    if (value === "A♥︎" || value === "A♠︎" || value === "A♣︎" || value === "A♦︎") {
+      // Om värdet på ess plus den nuvarande poängen överstiger 21, sätt värdet på esset till 1, annars sätt det till 11
+      return currentScore + 11 <= 21 ? 11 : 1;
+    }
     if (
       value === "J♥︎" ||
       value === "J♠︎" ||
@@ -300,6 +306,8 @@ export default function Blackjack() {
     setPlayerScore(newScore);
     console.log(newScore);
 
+    setPlayerImageHand([...playerImageHand, newCard.image])
+
 
     if (newScore > 21) {
       setMessage("Player busts! Dealer wins!");
@@ -346,7 +354,8 @@ export default function Blackjack() {
       <button onClick={dealCards}>Deal Cards</button>
       <button onClick={hit}>Hit</button>
       <button onClick={stand}>Stand</button>
-
+      <br />
+      <Link to="/">BlackJack</Link>
       <div>
         <h2>Player Hand: {playerScore}</h2>
         <div className="card-container">

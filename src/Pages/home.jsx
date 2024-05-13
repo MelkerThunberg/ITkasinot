@@ -4,7 +4,8 @@ import { Link } from "react-router-dom"
 export default function Home() {
 
     return (
-        <div>
+        <div class="content-container-homepage">
+        <div class="homepage-links">
             <h1>Välkommen till ItKasinot</h1>
             <h2>Välj vilket spel du vill spela nedanför!</h2>
 
@@ -19,7 +20,7 @@ export default function Home() {
             <Link to="/roulette">Roulette</Link>
 
             <Link to="/plinko">Plinko</Link>
-
+            </div>
         </div>
     )
 }
