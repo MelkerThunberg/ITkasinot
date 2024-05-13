@@ -5,7 +5,7 @@ export default function Dailybonus() {
     return (
         <div>
             <Navbar/>
-            <h1>Daily</h1>
+            <h1 id ="unusedh1">Daily</h1>
         </div>
     )
 }

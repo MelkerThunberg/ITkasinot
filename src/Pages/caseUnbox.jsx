@@ -1,5 +1,6 @@
 import  { useState } from 'react';
 import Navbar from '../components/navbar.jsx';
+import '../Styles/caseUnbox.css';
 
 export default function CaseOpening() {
     const [saldo, setSaldo] = useState(100); // State for the player's balance
@@ -56,7 +57,7 @@ export default function CaseOpening() {
     const [result, setResult] = useState('');
 
     return (
-        <div>
+        <div className="CaseOpening">
             <Navbar />
             <h1>Case Opening</h1>
             <p>Balance: $<span id="saldo">{saldo}</span> </p>

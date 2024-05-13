@@ -8,7 +8,7 @@ export default function Roulette() {
             <div>
                 <Navbar/>
             </div>
-            <h1>Roulette</h1>
+            <h1 id='unusedh1'>Roulette</h1>
         </div>
     )
 }

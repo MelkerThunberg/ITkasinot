@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import "../Styles/blackjack.css";
 import Navbar from "../components/navbar.jsx";
 
@@ -67,6 +66,7 @@ export default function Blackjack() {
   const [dealerImageHand, setDealerImageHand] = useState([]);
   const [playerImageHand, setPlayerImageHand] = useState([]);
   const [hiddenDealerCardImage, setHiddenDealerCardImage] = useState();
+  const [gameOver, setGameOver] = useState(false);
   const [deck, setDeck] = useState([
     { value: "2♥︎", image: card2Hearts },
     { value: "3♥︎", image: card3Hearts },
@@ -139,34 +139,21 @@ export default function Blackjack() {
       value === "A♣︎" ||
       value === "A♦︎"
     ) {
-      // Om värdet på ess plus den nuvarande poängen överstiger 21, sätt värdet på esset till 1, annars sätt det till 11
-      return currentScore + 11 <= 21 ? 11 : 1;
+      return 11;
     }
     if (
       value === "J♥︎" ||
       value === "J♠︎" ||
       value === "J♣︎" ||
-      value === "J♦︎"
-    ) {
-      return 10;
-    }
-    if (
+      value === "J♦︎" ||
       value === "Q♥︎" ||
       value === "Q♠︎" ||
       value === "Q♣︎" ||
-      value === "Q♦︎"
-    ) {
-      return 10;
-    }
-    if (
+      value === "Q♦︎" ||
       value === "K♥︎" ||
       value === "K♠︎" ||
       value === "K♣︎" ||
-      value === "K♦︎"
-    ) {
-      return 10;
-    }
-    if (
+      value === "K♦︎" ||
       value === "10♥︎" ||
       value === "10♠︎" ||
       value === "10♣︎" ||
@@ -278,6 +265,8 @@ export default function Blackjack() {
     setHiddenDealerCard(dealerCard2.card);
     setHiddenDealerCardValue(dealerCard2.cardValue);
     setHiddenDealerCardImage(dealerCard2.image);
+
+    setGameOver(false);
     setMessage("");
 
     if (playerScore === 21) {
@@ -285,8 +274,10 @@ export default function Blackjack() {
 
       if (dealerScore === 21) {
         setMessage("Push!");
+        setGameOver(true);
       } else {
         setMessage("Blackjack! Player wins!");
+        setGameOver(true);
       }
     }
   };
@@ -302,6 +293,7 @@ export default function Blackjack() {
 
     if (newScore > 21) {
       setMessage("Player busts! Dealer wins!");
+      setGameOver(true);
       // Ta bort insatsen
     }
     if (newScore === 21) {
@@ -331,12 +323,16 @@ export default function Blackjack() {
 
     if (newScore > 21) {
       setMessage("Dealer busts! Player wins!");
+      setGameOver(true);
     } else if (newScore > playerScore && newScore <= 21) {
       setMessage("Dealer wins!");
+      setGameOver(true);
     } else if (newScore < playerScore && newScore <= 21) {
       setMessage("Player wins!");
+      setGameOver(true);
     } else if (newScore === playerScore) {
       setMessage("Push!");
+      setGameOver(true);
     }
   };
 
@@ -344,34 +340,34 @@ export default function Blackjack() {
     <div>
       <Navbar />
       <div className="content-container-blackjack">
-        <button onClick={dealCards}>Deal Cards</button>
-        <button onClick={hit}>Hit</button>
-        <button onClick={stand}>Stand</button>
-        <br />
-        <Link to="/">BlackJack</Link>
+        <div className="button-container">
+          <button onClick={dealCards}>Deal Cards</button>
+          <button onClick={hit} disabled={gameOver}>Hit</button>
+          <button onClick={stand} disabled={gameOver}>Stand</button>
+        </div>
         <div>
-          <h2>Player Hand: {playerScore}</h2>
+          <h2 id="player-hand">Player Hand: {playerScore}</h2>
           <div className="card-container">
             {playerImageHand.map((image, index) => (
               <div key={index} className="card">
-                <img src={image} style={{ width: "100px" }} />
+                <img src={image} alt={`Player Card ${index}`} />
               </div>
             ))}
           </div>
         </div>
         <div>
-          <h2>Dealer Hand: {dealerScore}</h2>
+          <h2 id="dealer-hand">Dealer Hand: {dealerScore}</h2>
           <div className="card-container">
             {dealerImageHand.map((image, index) => (
               <div key={index} className="card">
-                <img src={image} style={{ width: "100px" }} />
+                <img src={image} alt={`Dealer Card ${index}`} />
               </div>
             ))}
           </div>
         </div>
-        <div>
+        <div className="message-container">
           <p>{message}</p>
-          {message && <button onClick={dealCards}>Deal Again</button>}
+          {message && <button onClick={dealCards} id="deal-again">Deal Again</button>}
         </div>
       </div>
     </div>

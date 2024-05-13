@@ -6,7 +6,7 @@ export default function Coinflip() {
       <div>
         <Navbar />
       </div>
-      <h1>coinflip</h1>
+      <h1 id ="unusedh1">coinflip</h1>
     </div>
   );
 }
