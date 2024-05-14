@@ -108,7 +108,7 @@ export default function Blackjack() {
     { value: "8♣︎", image: card8Clubs },
     { value: "9♣︎", image: card9Clubs },
     { value: "10♣︎", image: card10Clubs },
-    { value: "J♣︎", image: cardJackClubs },
+    { value: "J♣︎", image: cardJackClubs },     // Alla värde på 10 blir denna 
     { value: "Q♣︎", image: cardQueenClubs },
     { value: "K♣︎", image: cardKingClubs },
     { value: "A♣︎", image: cardAceClubs },
@@ -117,7 +117,7 @@ export default function Blackjack() {
     { value: "4♦︎", image: card4Diamonds },
     { value: "5♦︎", image: card5Diamonds },
     { value: "6♦︎", image: card6Diamonds },
-    { value: "7♦︎", image: card7Diamonds },
+    { value: "7♦︎", image: card7Diamonds },   
     { value: "8♦︎", image: card8Diamonds },
     { value: "9♦︎", image: card9Diamonds },
     { value: "10♦︎", image: card10Diamonds },
@@ -327,15 +327,31 @@ export default function Blackjack() {
 
     reducePlayerAce();
 
-    if (newScore > 21) {
+    if (newScore > 21) { // Borde va rätt
       setMessage("Player busts! Dealer wins!");
-      setGameOver(true);
+      gameOverFunc()
+
       // Ta bort insatsen
     }
     if (newScore === 21) {
       stand();
     }
   };
+
+  // När spelaren får 20 och stannar så drar dealern ett till kort när den har Knäckt och 9a gömd (19) samma på (18).
+  // Borde stanna eftersom den har över 17
+  // När både spelaren och dealern får samma fungerar det
+  // Blir push
+
+  // När spelaren får 21 genom 2a, J, 9 så stannar spelaren då har dealern 4a, Q, 4a men sedan vinner dealern FEL????
+
+  // När spelaren får 21 och dealern bj så vinner dealern RÄTT!!
+
+  // Dealern plockar ett till kort när den redan har högre värde än spelaren troligtviss pga det är under 17 dealern(16) spelaren(14)
+
+  // Dealer plockar kort fast den har över 17 när spelaren har 20
+
+  // Bugg med vissar samma kort flera gånger kommer ibland
 
   const stand = () => {
     showhiddenDealerCard();
@@ -357,20 +373,32 @@ export default function Blackjack() {
     setDealerHand(updatedDealerHand);
     setDealerScore(newScore);
 
-    if (newScore > 21) {
+    // När spelaren får 21 och sedan dealern också får 21 så vinner dealern FEL!
+    if (newScore > 21) {    // Borde va rätt
       setMessage("Dealer busts! Player wins!");
-      setGameOver(true);
-    } else if (newScore > playerScore && newScore <= 21) {
-      setMessage("Dealer wins!");
-      setGameOver(true);
-    } else if (newScore < playerScore && newScore <= 21) {
+      gameOverFunc()
+
+    } else if (playerScore > newScore) {
       setMessage("Player wins!");
-      setGameOver(true);
-    } else if (newScore === playerScore) {
+      // setMessage("Dealer wins!");
+
+      gameOverFunc()
+
+    } else if (playerScore < newScore) {
+      setMessage("Dealer wins!");
+      // setMessage("Player wins!");
+      gameOverFunc()
+
+    } else if (newScore === playerScore) {  // Fungerar nog inte
       setMessage("Push!");
-      setGameOver(true);
+      gameOverFunc()
     }
   };
+  const gameOverFunc = () =>  {
+    setGameOver(true);
+    setDealerAceCount(0)
+    setPlayerAceCount(0)
+  }
 
   return (
     <div>
