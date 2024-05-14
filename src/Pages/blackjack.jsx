@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Styles/blackjack.css";
 import Navbar from "../components/navbar.jsx";
 
@@ -108,7 +108,7 @@ export default function Blackjack() {
     { value: "8♣︎", image: card8Clubs },
     { value: "9♣︎", image: card9Clubs },
     { value: "10♣︎", image: card10Clubs },
-    { value: "J♣︎", image: cardJackClubs },     // Alla värde på 10 blir denna 
+    { value: "J♣︎", image: cardJackClubs },     // Alla värde på 10 blir denna -kanske inte!
     { value: "Q♣︎", image: cardQueenClubs },
     { value: "K♣︎", image: cardKingClubs },
     { value: "A♣︎", image: cardAceClubs },
@@ -126,6 +126,12 @@ export default function Blackjack() {
     { value: "K♦︎", image: cardKingDiamonds },
     { value: "A♦︎", image: cardAceDiamonds },
   ]);
+
+  useEffect(() => {
+    if (gameOver) {
+      setPlayerAceCount(0);
+    }
+  }, [gameOver]);
 
   const countCardValue = (card /*, currentScore*/) => {
     const value = card.value;
@@ -224,13 +230,13 @@ export default function Blackjack() {
     }
   };
 
-  const reducePlayerAce = (playerScore,playerAceCount) => {
+  const reducePlayerAce = (playerScore, playerAceCount) => {
     while (playerScore > 21 && playerAceCount > 0) {
       setPlayerScore(playerScore - 10);
       setPlayerAceCount(playerAceCount - 1);
   }
   }
-  const reduceDealerAce = (dealerScore,dealerAceCount) => {
+  const reduceDealerAce = (dealerScore, dealerAceCount) => {
     while (dealerScore > 21 && dealerAceCount > 0) {
       setDealerScore(dealerScore - 10);
       setDealerAceCount(dealerAceCount - 1);
@@ -238,6 +244,8 @@ export default function Blackjack() {
   }
 
   const dealDeck = (array) => {
+    setDealerAceCount(0);
+    setPlayerAceCount(0);
     let random = Math.floor(Math.random() * array.length);
     let card = array[random];
     array.splice(random, 1);
@@ -331,6 +339,7 @@ export default function Blackjack() {
       setMessage("Player busts! Dealer wins!");
       gameOverFunc()
 
+
       // Ta bort insatsen
     }
     if (newScore === 21) {
@@ -355,6 +364,7 @@ export default function Blackjack() {
 
   const stand = () => {
     showhiddenDealerCard();
+    reduceDealerAce();
 
     let newScore = dealerScore;
 
@@ -364,6 +374,7 @@ export default function Blackjack() {
     while (newScore < 17 || (newScore < playerScore && newScore <= 21)) {
       const newCard = dealDeck(deck);
       updatedDealerHand.push(newCard.card);
+      reduceDealerAce();
       updatedDealerHandImage.push(newCard.image);
       setDealerHand(updatedDealerHand);
       setDealerImageHand(updatedDealerHandImage);
@@ -396,9 +407,10 @@ export default function Blackjack() {
   };
   const gameOverFunc = () =>  {
     setGameOver(true);
-    setDealerAceCount(0)
-    setPlayerAceCount(0)
+    setDealerAceCount(0);
+    setPlayerAceCount(0);
   }
+  
 
   return (
     <div>

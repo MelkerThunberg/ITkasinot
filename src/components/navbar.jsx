@@ -14,6 +14,9 @@ export default function Navbar() {
             <Link to="/blackjack">BlackJack</Link>
           </li>
           <li>
+            <Link to="/blackjack2.0">BlackJack2.0</Link>
+          </li>
+          <li>
             <Link to="/coinflip">Singla Slant</Link>
           </li>
           <li>

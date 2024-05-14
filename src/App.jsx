@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 import Home from "./Pages/home";
 import Blackjack from "./Pages/blackjack";
+import Blackjack2 from "./Pages/blackjack2.0";
 import Coinflip from "./Pages/coinflip";
 import Dailybonus from "./Pages/dailybonus";
 import CaseUnbox from "./Pages/caseUnbox";
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/blackjack" element={<Blackjack />} />
+        <Route path="/blackjack2.0" element={<Blackjack2 />} />
         <Route path="/coinflip" element={<Coinflip />} />
         <Route path="/dailybonus" element={<Dailybonus />} />
         <Route path="/caseUnbox" element={<CaseUnbox />} />
