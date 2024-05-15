@@ -19,7 +19,7 @@
 }
 
 .button-container {
-  margin-top: 100px;
+  margin-top: 40px;
   display: flex;
   justify-content: center;
 }
@@ -44,4 +44,10 @@
   margin-top: 20px;
   text-align: center;
 }
+
+#soft17 {
+  margin-top: 20px;
+  text-align: center;
+}
+
 

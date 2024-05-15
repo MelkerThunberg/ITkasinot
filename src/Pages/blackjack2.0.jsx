@@ -55,12 +55,215 @@ import cardAceDiamonds from "../../resources/English_pattern_ace_of_diamonds.svg
 import cardAceHearts from "../../resources/English_pattern_ace_of_hearts.svg.png";
 import cardAceSpades from "../../resources/English_pattern_ace_of_spades.svg.png";
 export default function Blackjack2() {
+  const [deck, setDeck] = useState([
+    { card: "2♥︎", value: 2, image: card2Hearts },
+    { card: "3♥︎", value: 3, image: card3Hearts },
+    { card: "4♥︎", value: 4, image: card4Hearts },
+    { card: "5♥︎", value: 5, image: card5Hearts },
+    { card: "6♥︎", value: 6, image: card6Hearts },
+    { card: "7♥︎", value: 7, image: card7Hearts },
+    { card: "8♥︎", value: 8, image: card8Hearts },
+    { card: "9♥︎", value: 9, image: card9Hearts },
+    { card: "10♥︎", value: 10, image: card10Hearts },
+    { card: "J♥︎", value: 10, image: cardJackHearts },
+    { card: "Q♥︎", value: 10, image: cardQueenHearts },
+    { card: "K♥︎", value: 10, image: cardKingHearts },
+    { card: "A♥︎", value: 11, image: cardAceHearts },
+    { card: "2♠︎", value: 2, image: card2Spades },
+    { card: "3♠︎", value: 3, image: card3Spades },
+    { card: "4♠︎", value: 4, image: card4Spades },
+    { card: "5♠︎", value: 5, image: card5Spades },
+    { card: "6♠︎", value: 6, image: card6Spades },
+    { card: "7♠︎", value: 7, image: card7Spades },
+    { card: "8♠︎", value: 8, image: card8Spades },
+    { card: "9♠︎", value: 9, image: card9Spades },
+    { card: "10♠︎", value: 10, image: card10Spades },
+    { card: "J♠︎", value: 10, image: cardJackSpades },
+    { card: "Q♠︎", value: 10, image: cardQueenSpades },
+    { card: "K♠︎", value: 10, image: cardKingSpades },
+    { card: "A♠︎", value: 11, image: cardAceSpades },
+    { card: "2♣︎", value: 2, image: card2Clubs },
+    { card: "3♣︎", value: 3, image: card3Clubs },
+    { card: "4♣︎", value: 4, image: card4Clubs },
+    { card: "5♣︎", value: 5, image: card5Clubs },
+    { card: "6♣︎", value: 6, image: card6Clubs },
+    { card: "7♣︎", value: 7, image: card7Clubs },
+    { card: "8♣︎", value: 8, image: card8Clubs },
+    { card: "9♣︎", value: 9, image: card9Clubs },
+    { card: "10♣︎", value: 10, image: card10Clubs },
+    { card: "J♣︎", value: 10, image: cardJackClubs }, // Alla värde på 10 blir denna -kanske inte!
+    { card: "Q♣︎", value: 10, image: cardQueenClubs },
+    { card: "K♣︎", value: 10, image: cardKingClubs },
+    { card: "A♣︎", value: 11, image: cardAceClubs },
+    { card: "2♦︎", value: 2, image: card2Diamonds },
+    { card: "3♦︎", value: 3, image: card3Diamonds },
+    { card: "4♦︎", value: 4, image: card4Diamonds },
+    { card: "5♦︎", value: 5, image: card5Diamonds },
+    { card: "6♦︎", value: 6, image: card6Diamonds },
+    { card: "7♦︎", value: 7, image: card7Diamonds },
+    { card: "8♦︎", value: 8, image: card8Diamonds },
+    { card: "9♦︎", value: 9, image: card9Diamonds },
+    { card: "10♦︎", value: 10, image: card10Diamonds },
+    { card: "J♦︎", value: 10, image: cardJackDiamonds },
+    { card: "Q♦︎", value: 10, image: cardQueenDiamonds },
+    { card: "K♦︎", value: 10, image: cardKingDiamonds },
+    { card: "A♦︎", value: 11, image: cardAceDiamonds },
+  ]);
+  const [playerHand, setPlayerHand] = useState([]);
+  const [dealerHand, setDealerHand] = useState([]);
+
+  const [playerScore, setPlayerScore] = useState(0);
+  const [dealerScore, setDealerScore] = useState(0);
+
+  const [playerAceCount, setPlayerAceCount] = useState(0);
+  const [dealerAceCount, setDealerAceCount] = useState(0);
 
 
-    return (
+  // Använd useEffect-hooken för att övervaka förändringar i spelarens och dealerns händer och automatiskt uppdatera ässräkningen
+useEffect(() => {
+    reducePlayerAce();
+}, [playerHand]); // Kör funktionen reducePlayerAce varje gång playerHand uppdateras
+
+useEffect(() => {
+    reduceDealerAce();
+}, [dealerHand]); // Kör funktionen reduceDealerAce varje gång dealerHand uppdateras
+
+
+  const dealCard = () => {
+    let array = [...deck];
+    let random = Math.floor(Math.random() * deck.length);
+    let card = deck[random];
+    array.splice(random, 1);
+    setDeck(array);
+    console.log(card.card + "   Card left:   " + deck.length); // Prints card value and card
+    return card;
+  };
+
+  const initialDeal = () => {
+    setPlayerAceCount(0);
+    setDealerAceCount(0);
+
+    const playerCard1 = dealCard();
+    checkPlayerAce(playerCard1);
+
+    const playerCard2 = dealCard();
+    checkPlayerAce(playerCard2);
+
+    setPlayerHand([playerCard1, playerCard2]);
+    setPlayerScore(playerCard1.value + playerCard2.value);
+
+    const dealerCard1 = dealCard();
+    checkDealerAce(dealerCard1);
+
+    const dealerCard2 = dealCard();
+    checkDealerAce(dealerCard2);
+
+    setDealerHand([dealerCard1, dealerCard2]);
+    setDealerScore(dealerCard1.value + dealerCard2.value);
+  };
+
+  const hit = () => {
+    const newCard = dealCard();
+    checkPlayerAce(newCard);
+    setPlayerHand([...playerHand, newCard]);
+    setPlayerScore(playerScore + newCard.value);
+  };
+
+  const stand = () => {
+
+    const updatedDealerHand = [...dealerHand];
+    let dealerHitScore = dealerScore;
+    let dealerHitsAceCount = dealerAceCount;
+    
+    while (dealerHitScore < 17) {
+      const newCard = dealCard();
+
+      if (newCard.value === 11) {
+        dealerHitsAceCount++;
+      }
+      updatedDealerHand.push(newCard);
+      dealerHitScore += newCard.value;
+
+      dealerHitScore = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedScore;
+      dealerHitsAceCount = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedAceCount;
+      console.log("Dealer score: " + dealerHitScore);
+    }
+    setDealerHand(updatedDealerHand);
+    setDealerScore(dealerHitScore);
+    setDealerAceCount(dealerHitsAceCount);
+
+  }
+
+  const checkPlayerAce = (card) => {
+      if (card.value === 11) {
+        setPlayerAceCount(playerAceCount + 1);
+      }
+  }
+  const reducePlayerAce = () => {
+    let tempScore = playerScore;
+    let tempAceCount = playerAceCount;
+
+      while (tempScore  > 21 && tempAceCount  > 0) {
+        tempScore -= 10; // Reduce the score by 10 for each ace
+        tempAceCount--; // Reduce the count of aces
+      }
+      setPlayerScore(tempScore); // Update the player score
+      setPlayerAceCount(tempAceCount); // Update the ace count
+  }
+
+  const checkDealerAce = (card) => {
+    if (card.value === 11) {
+      setDealerAceCount(dealerAceCount + 1);
+    }
+  }
+
+  const reduceDealerAce = (dealerScore, dealerAceCount) => {
+
+    while (dealerScore > 21 && dealerAceCount > 0) {
+        dealerScore -= 10; // Reduce the score by 10 for each ace
+        dealerAceCount--; // Reduce the count of aces
+        console.log("Fungerar--------------");
+    }
+    return {reducedScore: dealerScore, reducedAceCount: dealerAceCount};
+  }
+
+
+  return (
+    <div>
+      <Navbar />
+      <h1 id ="unusedh1">BlackJack2.0</h1>
+      <h2 id="soft17">Soft 17</h2>
+      <div className="content-container-blackjack">
         <div>
-            <Navbar/>
-            <h1 id ="unusedh1">BlackJack2.0</h1>
+          <h2 id="dealer-hand">Dealer Hand: {dealerScore} :: {dealerAceCount}</h2>
+          <div className="card-container">
+            {dealerHand.map((card, index) => (
+              <div key={index} className="card">
+                <img src={card.image} alt={`Dealer Card ${index}`} />
+              </div>
+            ))}
+          </div>
         </div>
-    )
+        <div>
+          <h2 id="player-hand">Player Hand: {playerScore} :: {playerAceCount}</h2>
+          <div className="card-container">
+            {playerHand.map((card, index) => (
+              <div key={index} className="card">
+                <img src={card.image} alt={`Player Card ${index}`} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="button-container">
+          <button onClick={initialDeal}>Deal Cards</button>
+          <button onClick={hit}>
+            Hit
+          </button>
+          <button onClick={stand}>
+            Stand
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

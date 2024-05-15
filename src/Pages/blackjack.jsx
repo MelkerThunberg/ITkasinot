@@ -244,14 +244,12 @@ export default function Blackjack() {
   }
 
   const dealDeck = (array) => {
-    setDealerAceCount(0);
-    setPlayerAceCount(0);
+
     let random = Math.floor(Math.random() * array.length);
     let card = array[random];
     array.splice(random, 1);
-    console.log("ddddddd" + card.image);
     let cardValue = countCardValue(card);
-    console.log(cardValue);
+    console.log(array.length);
     return { card: card.value, cardValue: cardValue, image: card.image };
   };
 
@@ -262,6 +260,8 @@ export default function Blackjack() {
   };
 
   const dealCards = () => {
+    setDealerAceCount(0);
+    setPlayerAceCount(0);
     const playerCard1 = dealDeck([...deck]);
     const dealerCard1 = dealDeck([...deck]);
     const playerCard2 = dealDeck([...deck]);
@@ -329,7 +329,6 @@ export default function Blackjack() {
     setPlayerHand([...playerHand, newCard.card]);
     const newScore = playerScore + newCard.cardValue;
     setPlayerScore(newScore);
-    console.log(newScore);
 
     setPlayerImageHand([...playerImageHand, newCard.image]);
 
@@ -361,6 +360,7 @@ export default function Blackjack() {
   // Dealer plockar kort fast den har över 17 när spelaren har 20
 
   // Bugg med vissar samma kort flera gånger kommer ibland
+  // Tar inte bort kort från leken på rätt sätt och åtterställs eller inte leken
 
   const stand = () => {
     showhiddenDealerCard();
