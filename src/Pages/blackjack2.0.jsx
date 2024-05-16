@@ -55,7 +55,7 @@ import cardAceDiamonds from "../../resources/English_pattern_ace_of_diamonds.svg
 import cardAceHearts from "../../resources/English_pattern_ace_of_hearts.svg.png";
 import cardAceSpades from "../../resources/English_pattern_ace_of_spades.svg.png";
 export default function Blackjack2() {
-  const [deck, setDeck] = useState([
+  const [fullDeck, setFullDeck] = useState([
     { card: "2♥︎", value: 2, image: card2Hearts },
     { card: "3♥︎", value: 3, image: card3Hearts },
     { card: "4♥︎", value: 4, image: card4Hearts },
@@ -91,7 +91,7 @@ export default function Blackjack2() {
     { card: "8♣︎", value: 8, image: card8Clubs },
     { card: "9♣︎", value: 9, image: card9Clubs },
     { card: "10♣︎", value: 10, image: card10Clubs },
-    { card: "J♣︎", value: 10, image: cardJackClubs }, // Alla värde på 10 blir denna -kanske inte!
+    { card: "J♣︎", value: 10, image: cardJackClubs },
     { card: "Q♣︎", value: 10, image: cardQueenClubs },
     { card: "K♣︎", value: 10, image: cardKingClubs },
     { card: "A♣︎", value: 11, image: cardAceClubs },
@@ -109,6 +109,8 @@ export default function Blackjack2() {
     { card: "K♦︎", value: 10, image: cardKingDiamonds },
     { card: "A♦︎", value: 11, image: cardAceDiamonds },
   ]);
+  
+  const [deck, setDeck] = useState([]);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
 
@@ -118,16 +120,30 @@ export default function Blackjack2() {
   const [playerAceCount, setPlayerAceCount] = useState(0);
   const [dealerAceCount, setDealerAceCount] = useState(0);
 
+  const [hiddenCard, setHiddenCard] = useState();
 
+  const [gameState, setGameState] = useState("initial");
+  const [message, setMessage] = useState("");
+
+  
   // Använd useEffect-hooken för att övervaka förändringar i spelarens och dealerns händer och automatiskt uppdatera ässräkningen
-useEffect(() => {
+  useEffect(() => {
     reducePlayerAce();
-}, [playerHand]); // Kör funktionen reducePlayerAce varje gång playerHand uppdateras
+  }, [playerHand]); // Kör funktionen reducePlayerAce varje gång playerHand uppdateras
 
-useEffect(() => {
+  useEffect(() => {
     reduceDealerAce();
-}, [dealerHand]); // Kör funktionen reduceDealerAce varje gång dealerHand uppdateras
+  }, [dealerHand]); // Kör funktionen reduceDealerAce varje gång dealerHand uppdateras
 
+
+
+  const dealCardInitial = (array) => {
+    let random = Math.floor(Math.random() * array.length);
+    let pickedCard = array[random];
+    array.splice(random, 1);
+    console.log(pickedCard.card + "   Card left:   " + array.length); // Prints card value and card
+    return {card: pickedCard, value: pickedCard.value, array: array};
+  };
 
   const dealCard = () => {
     let array = [...deck];
@@ -138,28 +154,45 @@ useEffect(() => {
     console.log(card.card + "   Card left:   " + deck.length); // Prints card value and card
     return card;
   };
+  
 
   const initialDeal = () => {
+    setGameState("playing-initialDeal");
+
+    let tempDeck = [...fullDeck];
+
     setPlayerAceCount(0);
     setDealerAceCount(0);
 
-    const playerCard1 = dealCard();
+    const playerCard1 = dealCardInitial(tempDeck);
+    tempDeck = playerCard1.array
     checkPlayerAce(playerCard1);
 
-    const playerCard2 = dealCard();
+    const playerCard2 = dealCardInitial(tempDeck);
+    tempDeck = playerCard2.array
+
     checkPlayerAce(playerCard2);
 
-    setPlayerHand([playerCard1, playerCard2]);
+    setPlayerHand([playerCard1.card, playerCard2.card]);
     setPlayerScore(playerCard1.value + playerCard2.value);
 
-    const dealerCard1 = dealCard();
+    const dealerCard1 = dealCardInitial(tempDeck);
+    tempDeck = dealerCard1.array
+
     checkDealerAce(dealerCard1);
 
-    const dealerCard2 = dealCard();
-    checkDealerAce(dealerCard2);
+    const dealerCard2 = dealCardInitial(tempDeck);
+    tempDeck = dealerCard2.array
 
-    setDealerHand([dealerCard1, dealerCard2]);
-    setDealerScore(dealerCard1.value + dealerCard2.value);
+
+    setDeck(tempDeck);
+    setHiddenCard(dealerCard2.card);
+    setDealerHand([dealerCard1.card]);
+    setDealerScore(dealerCard1.value);
+
+    if (playerScore === 21) {
+      setGameState("gameOver");
+    }
   };
 
   const hit = () => {
@@ -170,10 +203,23 @@ useEffect(() => {
   };
 
   const stand = () => {
-
     const updatedDealerHand = [...dealerHand];
+
     let dealerHitScore = dealerScore;
+
     let dealerHitsAceCount = dealerAceCount;
+
+// Går nog att göra enklare genom sätta där uppe
+    if (hiddenCard.value === 11) {
+      dealerHitsAceCount++;
+    }
+    updatedDealerHand.push(hiddenCard);
+    dealerHitScore += hiddenCard.value;
+
+    dealerHitScore = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedScore;
+    dealerHitsAceCount = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedAceCount;
+// -----------------
+
     
     while (dealerHitScore < 17) {
       const newCard = dealCard();
@@ -192,6 +238,7 @@ useEffect(() => {
     setDealerScore(dealerHitScore);
     setDealerAceCount(dealerHitsAceCount);
 
+    setGameState("gameOver");
   }
 
   const checkPlayerAce = (card) => {
@@ -222,7 +269,6 @@ useEffect(() => {
     while (dealerScore > 21 && dealerAceCount > 0) {
         dealerScore -= 10; // Reduce the score by 10 for each ace
         dealerAceCount--; // Reduce the count of aces
-        console.log("Fungerar--------------");
     }
     return {reducedScore: dealerScore, reducedAceCount: dealerAceCount};
   }
@@ -255,15 +301,25 @@ useEffect(() => {
           </div>
         </div>
         <div className="button-container">
-          <button onClick={initialDeal}>Deal Cards</button>
-          <button onClick={hit}>
-            Hit
-          </button>
-          <button onClick={stand}>
-            Stand
-          </button>
+          {gameState === "initial" && (
+            <button onClick={initialDeal}>Deal Cards</button>
+          )}
+        {gameState === "playing-initialDeal" && (
+          <>
+            <button onClick={hit}>Hit</button>
+            <button onClick={stand}>Stand</button>
+          </>
+        )}
+        {gameState === "gameOver" && (
+          <button onClick={initialDeal}>Play Again</button>
+        )}
+        </div>
+        <div className="message-container">
+          <p>{gameState}</p>
+          <p>{message}</p>
         </div>
       </div>
     </div>
   );
 }
+// Fixa gamestate, message och vinnarvilkor!
