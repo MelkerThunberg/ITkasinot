@@ -4,6 +4,15 @@
   margin-top: 20px;
 }
 
+.RewardsHeader {
+  margin-top: 60px;
+  margin-bottom: -80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 #case {
   width: 200px;
   height: 200px;
@@ -19,7 +28,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  animation: open-case 1s ease-in-out;
+  /* animation: open-case 1s ease-in-out; */
 }
 
 #case div {

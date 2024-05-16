@@ -1,0 +1,26 @@
+.reward-grid {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: top;
+    margin-top: 5%;
+    margin-left: 33%; 
+    margin-bottom: -12%;
+    width: 35%;
+}
+
+.reward-image {
+    max-width: 100px;
+    margin-right: 10px;
+}
+
+.reward-text {
+    font-weight: bold;
+}
+
+
+
+
