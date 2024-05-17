@@ -131,17 +131,11 @@ export default function Blackjack2() {
     reducePlayerAce();
   }, [playerHand]); // Kör funktionen reducePlayerAce varje gång playerHand uppdateras
 
-  useEffect(() => {
-    reduceDealerAce();
-  }, [dealerHand]); // Kör funktionen reduceDealerAce varje gång dealerHand uppdateras
-
-
-
   const dealCardInitial = (array) => {
     let random = Math.floor(Math.random() * array.length);
     let pickedCard = array[random];
     array.splice(random, 1);
-    console.log(pickedCard.card + "   Card left:   " + array.length); // Prints card value and card
+    // console.log(pickedCard.card + "   Card left:   " + array.length); // Prints card value and card
     return {card: pickedCard, value: pickedCard.value, array: array};
   };
 
@@ -151,13 +145,14 @@ export default function Blackjack2() {
     let card = deck[random];
     array.splice(random, 1);
     setDeck(array);
-    console.log(card.card + "   Card left:   " + deck.length); // Prints card value and card
+    // console.log(card.card + "   Card left:   " + deck.length); // Prints card value and card
     return card;
   };
   
 
   const initialDeal = () => {
     setGameState("playing-initialDeal");
+    setMessage("");
 
     let tempDeck = [...fullDeck];
 
@@ -203,43 +198,40 @@ export default function Blackjack2() {
   };
 
   const stand = () => {
-    const updatedDealerHand = [...dealerHand];
-
-    let dealerHitScore = dealerScore;
-
-    let dealerHitsAceCount = dealerAceCount;
-
-// Går nog att göra enklare genom sätta där uppe
-    if (hiddenCard.value === 11) {
-      dealerHitsAceCount++;
-    }
-    updatedDealerHand.push(hiddenCard);
-    dealerHitScore += hiddenCard.value;
-
-    dealerHitScore = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedScore;
-    dealerHitsAceCount = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedAceCount;
-// -----------------
-
-    
+    const updatedDealerHand = [...dealerHand, hiddenCard];
+  
+    let dealerHitScore = dealerScore + hiddenCard.value;
+    let dealerHitsAceCount = hiddenCard.value === 11 ? dealerAceCount + 1 : dealerAceCount;
+  
+    const updateDealerScore = (score, aceCount) => {
+      while (score > 21 && aceCount > 0) {
+        score -= 10;
+        aceCount--;
+      }
+      return { score, aceCount };
+    };
+  
+    // Update initial hidden card state
+    ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateDealerScore(dealerHitScore, dealerHitsAceCount));
+  
     while (dealerHitScore < 17) {
       const newCard = dealCard();
-
+      updatedDealerHand.push(newCard);
+  
+      dealerHitScore += newCard.value;
       if (newCard.value === 11) {
         dealerHitsAceCount++;
       }
-      updatedDealerHand.push(newCard);
-      dealerHitScore += newCard.value;
-
-      dealerHitScore = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedScore;
-      dealerHitsAceCount = reduceDealerAce(dealerHitScore, dealerHitsAceCount).reducedAceCount;
-      console.log("Dealer score: " + dealerHitScore);
+  
+      ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateDealerScore(dealerHitScore, dealerHitsAceCount));
     }
+  
     setDealerHand(updatedDealerHand);
     setDealerScore(dealerHitScore);
     setDealerAceCount(dealerHitsAceCount);
-
     setGameState("gameOver");
-  }
+  };
+  
 
   const checkPlayerAce = (card) => {
       if (card.value === 11) {
@@ -263,16 +255,6 @@ export default function Blackjack2() {
       setDealerAceCount(dealerAceCount + 1);
     }
   }
-
-  const reduceDealerAce = (dealerScore, dealerAceCount) => {
-
-    while (dealerScore > 21 && dealerAceCount > 0) {
-        dealerScore -= 10; // Reduce the score by 10 for each ace
-        dealerAceCount--; // Reduce the count of aces
-    }
-    return {reducedScore: dealerScore, reducedAceCount: dealerAceCount};
-  }
-
 
   return (
     <div>
