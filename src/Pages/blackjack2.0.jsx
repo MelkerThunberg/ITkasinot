@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../Styles/blackjack.css";
-import Navbar from "../components/navbar.jsx";
 
 import card2Clubs from "../../resources/English_pattern_2_of_clubs.svg.png";
 import card2Diamonds from "../../resources/English_pattern_2_of_diamonds.svg.png";
