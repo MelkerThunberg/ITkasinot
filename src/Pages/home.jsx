@@ -1,14 +1,11 @@
 import { Link } from "react-router-dom";
-import Navbar from "../components/navbar.jsx";
 import "../Styles/home.css";
 
 export default function Home() {
   return (
     <div>
-      <Navbar /> {/* Använd Navbar-komponenten här */}
-      <div></div>
-      <div class="content-container-homepage">
-        <div class="homepage-links">
+      <div className="content-container-homepage">
+        <div className="homepage-links">
           <h1>Välkommen till ItKasinot</h1>
           <h2>Välj vilket spel du vill spela nedanför!</h2>
 

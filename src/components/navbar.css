@@ -54,5 +54,21 @@
   padding: 5px 10px; /* Justera fyllning för att öka visuell separation */
   border-radius: 5px; /* Runda hörn för en mjukare look */
   margin-left: auto; /* Detta kommer att placera balansdelen längst till höger */
-  margin-right: 15px; /* Justera marginalen från höger för att ge lite utrymme */
+  margin-right: 16px; /* Justera marginalen från höger för att ge lite utrymme */
+}
+
+.username {
+  color: #fff;
+  font-size: 16px;
+  margin-right: 16px;
+}
+
+.logout-button {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 16px;
 }

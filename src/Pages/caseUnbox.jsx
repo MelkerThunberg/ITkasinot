@@ -1,85 +1,128 @@
-import { useState } from 'react';
-import Navbar from '../components/navbar.jsx';
-import RewardBox from '../components/rewardBox.jsx';
-import '../Styles/caseUnbox.css';
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import RewardBox from "../components/rewardBox.jsx";
+import { useCurrentUser } from "../hooks/useCurrentUser.jsx";
+import "../Styles/caseUnbox.css";
+
+const rewards = [
+  {
+    name: "$10",
+    amount: 10,
+    text: "$10.",
+    imageUrl: "../resources/csgo_skins/nightwish.png",
+  },
+  {
+    name: "$20",
+    amount: 20,
+    text: "$20.",
+    imageUrl: "../resources/csgo_skins/neon_revolution.png",
+  },
+  {
+    name: "$30",
+    amount: 30,
+    text: "$30.",
+    imageUrl: "../resources/csgo_skins/printstream_deagle.png",
+  },
+  {
+    name: "$50",
+    amount: 50,
+    text: "$50.",
+    imageUrl: "../resources/csgo_skins/hydra_gloves_emerald.png",
+  },
+  {
+    name: "$100",
+    amount: 100,
+    text: "$100.",
+    imageUrl: "../resources/csgo_skins/AWP_Asiimov.png",
+  },
+  {
+    name: "$1000",
+    amount: 1000,
+    text: "$1000.",
+    imageUrl: "../resources/csgo_skins/butterfly_crimson_web.png",
+  },
+];
+
+const postCaseUnbox = () =>
+  fetch("http://localhost:4000/game/caseunbox", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  }).then((res) => res.json());
 
 export default function CaseOpening() {
-    const [saldo, setSaldo] = useState(100); // State for the player's balance
-    const [isRunning, setIsRunning] = useState(false); // State to keep track of whether the game is running
+  const { user, refetch: refetchBalance } = useCurrentUser();
+  const balance = user?.balance || 0;
+  const [isAnimating, setIsAnimating] = useState(false);
 
-    const spinCost = 30;
+  const { mutate } = useMutation({
+    mutationFn: postCaseUnbox,
+    onSuccess: ({ success, message, reward }) => {
+      if (!success) {
+        alert(message);
+        return;
+      }
 
-    // A list of different rewards with their names, values, messages, and image URLs to the player
-    const rewards = [
-        { name: '$10', amount: 10, text: '$10.', imageUrl: '../resources/csgo_skins/nightwish.png' },
-        { name: '$20', amount: 20, text: '$20.', imageUrl: '../resources/csgo_skins/neon_revolution.png' },
-        { name: '$30', amount: 30, text: '$30.', imageUrl: '../resources/csgo_skins/printstream_deagle.png' },
-        { name: '$50', amount: 50, text: '$50.', imageUrl: '../resources/csgo_skins/hydra_gloves_emerald.png' },
-        { name: '$100', amount: 100, text: '$100.', imageUrl: '../resources/csgo_skins/AWP_Asiimov.png' },
-        { name: '$1000', amount: 1000, text: '$1000.', imageUrl: '../resources/csgo_skins/butterfly_crimson_web.png' },
-        
-    ];
+      spinAnimation(reward);
+    },
+  });
 
-    // Function to open the case and choose a random reward
-    const openCase = () => {
-        if (isRunning) return; // If the game is already running, exit the function
+  const spin = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    mutate();
+  };
 
-        if (saldo < spinCost) {
-            alert("Insufficient funds!"); // Show a warning if the player doesn't have enough money
-            return;
-        }
+  const spinAnimation = (rewardAmount) => {
+    let spinCount = 0; // Counter for the number of spins
+    let spinInterval = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * rewards.length); // Choose a random reward
+      const reward = rewards[randomIndex];
+      setReward(reward); // Update the reward shown to the player
+      spinCount++;
 
-        // Subtract $10 from saldo before starting the animation
-        setSaldo(prevSaldo => prevSaldo - spinCost);
-        setIsRunning(true); // Set isRunning to true when the game starts
+      if (spinCount > 10) {
+        clearInterval(spinInterval);
+        const reward = rewards.find((r) => r.amount === rewardAmount);
+        setResult(reward.name);
+        setReward(reward);
+        refetchBalance();
+        setIsAnimating(false);
+      }
+    }, 200);
+  };
 
-        let updatedSaldo = saldo - spinCost; // Update balance after the player opens the case
+  const spinCost = 30;
 
-        let spinCount = 0; // Counter for the number of spins
-        let spinInterval = setInterval(() => {
-            const randomIndex = Math.floor(Math.random() * rewards.length); // Choose a random reward
-            const reward = rewards[randomIndex];
-            setReward(reward); // Update the reward shown to the player
-            spinCount++;
+  // State for reward and reward message
+  const [reward, setReward] = useState({});
+  const [result, setResult] = useState("");
 
-            if (spinCount > 10) { // When spin count reaches 10
-                clearInterval(spinInterval); // Stop the interval to end the animation
-
-                // Find the final reward based on the selected reward name
-                const finalReward = rewards.find(r => r.name === reward.name); 
-                updatedSaldo += finalReward.amount; // Update balance with the reward value
-
-                // Update reward message and result text for the player
-                setResult(finalReward.text);
-                setSaldo(updatedSaldo); // Update balance with the new balance after the player gets the reward
-                setIsRunning(false); // Set isRunning to false when the game is finished
-            }
-        }, 200); // Animation lasts for 200 milliseconds
-    };
-
-    // State for reward and reward message
-    const [reward, setReward] = useState({});
-    const [result, setResult] = useState('');
-
-    return (
-        <div>
-            <h1 className="RewardsHeader">IN THIS CASE</h1>
-            <div className="reward-grid">
-                {rewards.map((reward, index) => (
-                    <RewardBox key={index} reward={reward} />
-                ))}
-            </div>
-            <div className="CaseOpening">
-                <Navbar />
-                <h1>Case Opening</h1>
-                <p>Balance: $<span id="saldo">{saldo}</span> </p>
-                <button onClick={openCase}>Open Case (${spinCost})</button>
-                <div id="case">
-                    {reward.imageUrl && <img src={reward.imageUrl} alt={reward.name} id="reward" />}
-                </div>
-                <p id="result">Your drop: {result}</p>
-            </div>
+  return (
+    <div>
+      <h1 className="RewardsHeader">IN THIS CASE</h1>
+      <div className="reward-grid">
+        {rewards.map((reward, index) => (
+          <RewardBox key={index} reward={reward} />
+        ))}
+      </div>
+      <div className="CaseOpening">
+        <h1>Case Opening</h1>
+        <p>
+          Balance: $<span id="saldo">{balance}</span>{" "}
+        </p>
+        <button disabled={isAnimating} onClick={spin}>
+          Open Case (${spinCost})
+        </button>
+        <div id="case">
+          {reward.imageUrl && (
+            <img src={reward.imageUrl} alt={reward.name} id="reward" />
+          )}
         </div>
-        
-    );
+        <p id="result">Your drop: {result}</p>
+      </div>
+    </div>
+  );
 }
