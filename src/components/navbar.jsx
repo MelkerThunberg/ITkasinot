@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./navbar.css"; // Importera CSS-filen för Navbar-stilen
+import { useCurrentUser } from "../hooks/useCurrentUser";
 
 export default function Navbar() {
+  const { user, logout } = useCurrentUser();
   return (
     <nav className="navbar-container">
       <div className="navbar">
@@ -32,7 +34,11 @@ export default function Navbar() {
             <Link to="/plinko">Plinko</Link>
           </li>
         </ul>
-        <div className="balance">1000$</div>
+        <div className="balance">{user?.balance || 0}$</div>
+        <div className="username">{user?.username}</div>
+        <button className="logout-button" onClick={logout}>
+          Logga ut
+        </button>
       </div>
     </nav>
   );

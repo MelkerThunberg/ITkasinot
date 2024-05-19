@@ -414,7 +414,6 @@ export default function Blackjack() {
 
   return (
     <div>
-      <Navbar />
       <div className="content-container-blackjack">
         <div className="button-container">
           <button onClick={dealCards}>Deal Cards</button>
