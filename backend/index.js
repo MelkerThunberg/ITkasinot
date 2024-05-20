@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import pkg from "body-parser";
+import crypto from "crypto";
 
 import cookieParser from "cookie-parser";
 import { database } from "./database.js";
@@ -54,7 +55,7 @@ app.post("/game/coinflip", async (req, res) => {
   });
 });
 
-const SPIN_COST = 30;
+const SPIN_COST = 100;
 app.post("/game/caseunbox", async (req, res) => {
   const user = req.user;
   if (!user) return res.status(401).json({ message: "Unauthorized" });
@@ -75,6 +76,11 @@ app.post("/auth/register", async (req, res) => {
   const body = req.body;
   const username = body.username;
   const password = body.password;
+  const encryptedPassword = crypto
+    .createHash("sha256")
+    .update(password)
+    .digest("hex");
+
   const balance = 1000;
 
   const user = await database.get(`SELECT * FROM users WHERE username = ?`, [
@@ -89,7 +95,7 @@ app.post("/auth/register", async (req, res) => {
 
   database.run(
     `INSERT INTO users (username, password, balance) VALUES (?, ?, ?)`,
-    [username, password, balance]
+    [username, encryptedPassword, balance]
   );
 
   res.json({ message: "Success", success: true });
@@ -103,10 +109,14 @@ app.post("/auth/login", async (req, res) => {
   const body = req.body;
   const username = body.username;
   const password = body.password;
+  const encryptedPassword = crypto
+    .createHash("sha256")
+    .update(password)
+    .digest("hex");
 
   const match = await database.get(
     `SELECT * FROM users WHERE username = ? AND password = ?`,
-    [username, password]
+    [username, encryptedPassword]
   );
 
   if (!match)
