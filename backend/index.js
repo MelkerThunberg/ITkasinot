@@ -55,7 +55,7 @@ app.post("/game/coinflip", async (req, res) => {
   });
 });
 
-const SPIN_COST = 30;
+const SPIN_COST = 100;
 app.post("/game/caseunbox", async (req, res) => {
   const user = req.user;
   if (!user) return res.status(401).json({ message: "Unauthorized" });
