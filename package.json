@@ -11,9 +11,14 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.37.1",
+<<<<<<< HEAD
     "bcrypt": "^5.1.1",
+=======
+    "express": "^4.19.2",
+>>>>>>> 75112a8 (git)
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.23.0"
   },
   "devDependencies": {
