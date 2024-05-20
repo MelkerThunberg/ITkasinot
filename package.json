@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.37.1",
+    "abbrev": "^2.0.0",
     "bcrypt": "^5.1.1",
+    "detect-libc": "^2.0.3",
     "express": "^4.19.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
