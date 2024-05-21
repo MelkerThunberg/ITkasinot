@@ -8,7 +8,7 @@ npm install
 
 # To run the program do the following:
 
-1. write the following command in terminal:
+1. Write the following command in terminal:
 
 ```bash
 npm start
