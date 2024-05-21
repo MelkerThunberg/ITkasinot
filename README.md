@@ -1,25 +1,17 @@
 # Installation Guide
 
-To install all packages, run the following commands:
+To install all packages, run the following command in terminal:
 
 ```bash
-npm i
-cd backend
-npm i
+npm install
 ```
 
 # To run the program do the following:
 
-1. start 2 terminals
-2. in one terminal do :
+1. write the following command in terminal:
 
 ```bash
-cd backend
 npm start
 ```
 
-3. in the other terminal do:
-
-```bash
-npm run dev
-```
+This will both start backend and frontend, letting you use the application.
