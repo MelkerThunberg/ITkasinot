@@ -89,7 +89,6 @@
     "for-each": "^0.3.3",
     "fs-minipass": "^2.1.0",
     "fs.realpath": "^1.0.0",
-    "fsevents": "^2.3.3",
     "function-bind": "^1.1.2",
     "function.prototype.name": "^1.1.6",
     "functions-have-names": "^1.2.3",
