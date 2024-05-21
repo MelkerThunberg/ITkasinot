@@ -53,6 +53,23 @@ import cardAceClubs from "../../resources/English_pattern_ace_of_clubs.svg.png";
 import cardAceDiamonds from "../../resources/English_pattern_ace_of_diamonds.svg.png";
 import cardAceHearts from "../../resources/English_pattern_ace_of_hearts.svg.png";
 import cardAceSpades from "../../resources/English_pattern_ace_of_spades.svg.png";
+
+import { useCurrentUser } from "../hooks/useCurrentUser";
+import { useMutation } from "@tanstack/react-query";
+
+const postBlackjack = ({ betAmount}) =>
+  fetch("http://localhost:4000/game/blackjack", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      betAmount,
+    }),
+    credentials: "include",
+  }).then((res) => res.json());
+
+
 export default function Blackjack2() {
   const [fullDeck, setFullDeck] = useState([
     { card: "2♥︎", value: 2, image: card2Hearts },
@@ -123,6 +140,37 @@ export default function Blackjack2() {
 
   const [gameState, setGameState] = useState("initial");
   const [message, setMessage] = useState("");
+
+  const { refetch: refetchBalance } = useCurrentUser();
+  const [betAmount, setBetAmount] = useState(0);
+
+  const { mutate, data, reset } = useMutation({
+    mutationFn: postBlackjack,
+    onSuccess: ({ success, message, winnings }) => {
+      if (!success) {
+        alert(message);
+        playAgain();
+        return;
+      }
+      refetchBalance();
+      setMessage(`You won: ${winnings}`);
+    },
+  });
+  const winnings = data?.winnings;
+
+  const startGame = () => {
+    setGameState("initial");
+    setMessage("");
+    setPlayerHand([]);
+    setDealerHand([]);
+    setPlayerScore(0);
+    setDealerScore(0);
+    setPlayerAceCount(0);
+    setDealerAceCount(0);
+
+    mutate({ betAmount }); // nåt
+
+  };
 
   const dealCardInitial = (array) => {
     let random = Math.floor(Math.random() * array.length);
@@ -294,6 +342,8 @@ export default function Blackjack2() {
       <h1 id ="unusedh1">BlackJack2.0</h1>
       <h2 id="soft17">Soft 17</h2>
       <div className="content-container-blackjack">
+        {gameState !== "initial" ? (
+        <div className="hand-container">
         <div>
           <h2 id="dealer-hand">Dealer Hand: {dealerScore} :: {dealerAceCount}</h2>
           <div className="card-container">
@@ -314,6 +364,22 @@ export default function Blackjack2() {
             ))}
           </div>
         </div>
+        </div>
+        ) : (
+          <div className="bet-container"> 
+            <label htmlFor="betAmount"> Bet Amount: </label>
+              <input type="number"
+              id="betAmount"
+              value={betAmount}
+              onChange={(e) => setBetAmount(e.target.value)}
+              />
+              <br />
+              <button onClick={initialDeal}>
+                deal Cards
+              </button>
+          </div>
+        )
+        }
         <div className="button-container">
           {gameState === "initial" && (
             <button onClick={initialDeal}>Deal Cards</button>
@@ -325,7 +391,10 @@ export default function Blackjack2() {
           </>
         )}
         {gameState === "gameOver" && (
-          <button onClick={initialDeal}>Play Again</button>
+          <div>
+          <p>Du van: 1111(något)</p>
+          <button onClick={startGame}>Play Again</button>
+          </div>
         )}
         </div>
         <div className="message-container">
