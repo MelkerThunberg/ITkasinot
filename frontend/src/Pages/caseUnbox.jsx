@@ -94,7 +94,7 @@ export default function CaseOpening() {
     }, 200);
   };
 
-  const spinCost = 30;
+  const spinCost = 100;
 
   // State for reward and reward message
   const [reward, setReward] = useState({});
