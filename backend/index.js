@@ -218,3 +218,32 @@ const port = 4000;
 app.listen(port, () => {
   console.log(`Server started on port http://localhost:${port}`);
 });
+
+app.post('/game/dailybonus', (req, res) => {
+  const { userId } = req.body;
+
+  // Find the user by userId
+  const user = users.find(u => u.id === userId);
+
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const claimCooldown = 10 * 60 * 1000; // 10 minutes in milliseconds
+  const lastClaimTimestamp = user.lastClaimTimestamp || 0;
+
+  // Check if enough time has passed since the last claim
+  if (Date.now() - lastClaimTimestamp < claimCooldown) {
+    return res.status(400).json({ error: 'You can claim only once every 10 minutes.' });
+  }
+
+  // Update the user's balance with $10
+  user.balance += 10;
+  user.lastClaimTimestamp = Date.now();
+
+  return res.json({ message: 'Daily bonus claimed! You received $10.' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
