@@ -57,7 +57,7 @@ import cardAceSpades from "../../resources/English_pattern_ace_of_spades.svg.png
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { useMutation } from "@tanstack/react-query";
 
-const postBlackjack = ({ betAmount}) =>
+const postBlackjack = ({ betAmount }) =>
   fetch("http://localhost:4000/game/blackjack", {
     method: "POST",
     headers: {
@@ -68,7 +68,6 @@ const postBlackjack = ({ betAmount}) =>
     }),
     credentials: "include",
   }).then((res) => res.json());
-
 
 export default function Blackjack2() {
   const [fullDeck, setFullDeck] = useState([
@@ -125,7 +124,7 @@ export default function Blackjack2() {
     { card: "K♦︎", value: 10, image: cardKingDiamonds },
     { card: "A♦︎", value: 11, image: cardAceDiamonds },
   ]);
-  
+
   const [deck, setDeck] = useState([]);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
@@ -169,7 +168,6 @@ export default function Blackjack2() {
     setDealerAceCount(0);
 
     mutate({ betAmount }); // nåt
-
   };
 
   const dealCardInitial = (array) => {
@@ -177,7 +175,7 @@ export default function Blackjack2() {
     let pickedCard = array[random];
     array.splice(random, 1);
     // console.log(pickedCard.card + "   Card left:   " + array.length); // Prints card value and card
-    return {card: pickedCard, value: pickedCard.value, array: array};
+    return { card: pickedCard, value: pickedCard.value, array: array };
   };
 
   const dealCard = () => {
@@ -189,7 +187,6 @@ export default function Blackjack2() {
     console.log(card.card + "   Card left:   " + deck.length); // Prints card value and card
     return card;
   };
-  
 
   const initialDeal = () => {
     setGameState("playing-initialDeal");
@@ -201,11 +198,11 @@ export default function Blackjack2() {
     setDealerAceCount(0);
 
     const playerCard1 = dealCardInitial(tempDeck);
-    tempDeck = playerCard1.array
+    tempDeck = playerCard1.array;
     checkPlayerAce(playerCard1);
 
     const playerCard2 = dealCardInitial(tempDeck);
-    tempDeck = playerCard2.array
+    tempDeck = playerCard2.array;
 
     checkPlayerAce(playerCard2);
 
@@ -214,19 +211,18 @@ export default function Blackjack2() {
     setPlayerScore(initialPlayerScore);
 
     const dealerCard1 = dealCardInitial(tempDeck);
-    tempDeck = dealerCard1.array
+    tempDeck = dealerCard1.array;
 
     checkDealerAce(dealerCard1);
 
     const dealerCard2 = dealCardInitial(tempDeck);
-    tempDeck = dealerCard2.array
-
+    tempDeck = dealerCard2.array;
 
     setDeck(tempDeck);
     setHiddenCard(dealerCard2.card);
 
     if (initialPlayerScore === 21) {
-      if ((dealerCard1.value + dealerCard2.value) === 21) {
+      if (dealerCard1.value + dealerCard2.value === 21) {
         setDealerHand([dealerCard1.card, dealerCard2.card]);
         setGameState("gameOver");
         setMessage("Push!");
@@ -238,8 +234,7 @@ export default function Blackjack2() {
         setMessage("Blackjack!");
         // 3 utdelningar
       }
-    }
-    else {
+    } else {
       setDealerHand([dealerCard1.card]);
       setDealerScore(dealerCard1.value);
     }
@@ -250,7 +245,10 @@ export default function Blackjack2() {
     let newPlayerScore = playerScore + newCard.value;
     let newPlayerAceCount = playerAceCount + (newCard.value === 11 ? 1 : 0);
 
-    ({ score: newPlayerScore, aceCount: newPlayerAceCount } = updateScore(newPlayerScore, newPlayerAceCount));
+    ({ score: newPlayerScore, aceCount: newPlayerAceCount } = updateScore(
+      newPlayerScore,
+      newPlayerAceCount
+    ));
 
     setPlayerHand([...playerHand, newCard]);
     setPlayerScore(newPlayerScore);
@@ -265,24 +263,31 @@ export default function Blackjack2() {
 
   const stand = () => {
     const updatedDealerHand = [...dealerHand, hiddenCard];
-  
+
     let dealerHitScore = dealerScore + hiddenCard.value;
-    let dealerHitsAceCount = hiddenCard.value === 11 ? dealerAceCount + 1 : dealerAceCount;
-  
-    ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateScore(dealerHitScore, dealerHitsAceCount));
-  
+    let dealerHitsAceCount =
+      hiddenCard.value === 11 ? dealerAceCount + 1 : dealerAceCount;
+
+    ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateScore(
+      dealerHitScore,
+      dealerHitsAceCount
+    ));
+
     while (dealerHitScore < 17) {
       const newCard = dealCard();
       updatedDealerHand.push(newCard);
-  
+
       dealerHitScore += newCard.value;
       if (newCard.value === 11) {
         dealerHitsAceCount++;
       }
-  
-      ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateScore(dealerHitScore, dealerHitsAceCount));
+
+      ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateScore(
+        dealerHitScore,
+        dealerHitsAceCount
+      ));
     }
-  
+
     setDealerHand(updatedDealerHand);
     setDealerScore(dealerHitScore);
     setDealerAceCount(dealerHitsAceCount);
@@ -305,30 +310,38 @@ export default function Blackjack2() {
       // 0 utdelningar
     }
 
-    if (dealerHitScore !== 21 && updatedDealerHand.length !== 2 && playerScore === dealerHitScore) {
+    if (
+      dealerHitScore !== 21 &&
+      updatedDealerHand.length !== 2 &&
+      playerScore === dealerHitScore
+    ) {
       setGameState("gameOver");
       setMessage("Push!");
       // 1 utdelningar
     }
 
-    if (dealerHitScore === 21 && updatedDealerHand.length === 2 && playerScore === 21) {
+    if (
+      dealerHitScore === 21 &&
+      updatedDealerHand.length === 2 &&
+      playerScore === 21
+    ) {
       setGameState("gameOver");
       setMessage("Dealer wins with blackjack!");
       // 0 utdelningar
     }
   };
-  
+
   const checkPlayerAce = (card) => {
-      if (card.value === 11) {
-        setPlayerAceCount(playerAceCount + 1);
-      }
-  }
+    if (card.value === 11) {
+      setPlayerAceCount(playerAceCount + 1);
+    }
+  };
 
   const checkDealerAce = (card) => {
     if (card.value === 11) {
       setDealerAceCount(dealerAceCount + 1);
     }
-  }
+  };
   const updateScore = (score, aceCount) => {
     while (score > 21 && aceCount > 0) {
       score -= 10;
@@ -339,63 +352,65 @@ export default function Blackjack2() {
 
   return (
     <div>
-      <h1 id ="unusedh1">BlackJack2.0</h1>
+      <h1 id="unusedh1">BlackJack2.0</h1>
       <h2 id="soft17">Soft 17</h2>
       <div className="content-container-blackjack">
         {gameState !== "initial" ? (
-        <div className="hand-container">
-        <div>
-          <h2 id="dealer-hand">Dealer Hand: {dealerScore} :: {dealerAceCount}</h2>
-          <div className="card-container">
-            {dealerHand.map((card, index) => (
-              <div key={index} className="card">
-                <img src={card.image} alt={`Dealer Card ${index}`} />
+          <div className="hand-container">
+            <div>
+              <h2 id="dealer-hand">
+                Dealer Hand: {dealerScore} :: {dealerAceCount}
+              </h2>
+              <div className="card-container">
+                {dealerHand.map((card, index) => (
+                  <div key={index} className="card">
+                    <img src={card.image} alt={`Dealer Card ${index}`} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h2 id="player-hand">Player Hand: {playerScore} :: {playerAceCount}</h2>
-          <div className="card-container">
-            {playerHand.map((card, index) => (
-              <div key={index} className="card">
-                <img src={card.image} alt={`Player Card ${index}`} />
+            </div>
+            <div>
+              <h2 id="player-hand">
+                Player Hand: {playerScore} :: {playerAceCount}
+              </h2>
+              <div className="card-container">
+                {playerHand.map((card, index) => (
+                  <div key={index} className="card">
+                    <img src={card.image} alt={`Player Card ${index}`} />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-        </div>
         ) : (
-          <div className="bet-container"> 
+          <div className="bet-container">
             <label htmlFor="betAmount"> Bet Amount: </label>
-              <input type="number"
+            <input
+              type="number"
               id="betAmount"
               value={betAmount}
               onChange={(e) => setBetAmount(e.target.value)}
-              />
-              <br />
-              <button onClick={initialDeal}>
-                deal Cards
-              </button>
+            />
+            <br />
+            <button onClick={initialDeal}>deal Cards</button>
           </div>
-        )
-        }
+        )}
         <div className="button-container">
           {gameState === "initial" && (
             <button onClick={initialDeal}>Deal Cards</button>
           )}
-        {gameState === "playing-initialDeal" && (
-          <>
-            <button onClick={hit}>Hit</button>
-            <button onClick={stand}>Stand</button>
-          </>
-        )}
-        {gameState === "gameOver" && (
-          <div>
-          <p>Du van: 1111(något)</p>
-          <button onClick={startGame}>Play Again</button>
-          </div>
-        )}
+          {gameState === "playing-initialDeal" && (
+            <>
+              <button onClick={hit}>Hit</button>
+              <button onClick={stand}>Stand</button>
+            </>
+          )}
+          {gameState === "gameOver" && (
+            <div>
+              <p>Du van: 1111(något)</p>
+              <button onClick={startGame}>Play Again</button>
+            </div>
+          )}
         </div>
         <div className="message-container">
           <p>{gameState}</p>
