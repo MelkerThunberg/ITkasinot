@@ -57,7 +57,7 @@ import cardAceSpades from "../../resources/English_pattern_ace_of_spades.svg.png
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { useMutation } from "@tanstack/react-query";
 
-const postBlackjack = ({ betAmount }) =>
+const postBlackjack = ({ betAmount, winingState }) =>
   fetch("http://localhost:4000/game/blackjack", {
     method: "POST",
     headers: {
@@ -65,6 +65,7 @@ const postBlackjack = ({ betAmount }) =>
     },
     body: JSON.stringify({
       betAmount,
+      winingState,
     }),
     credentials: "include",
   }).then((res) => res.json());
@@ -140,22 +141,34 @@ export default function Blackjack2() {
   const [gameState, setGameState] = useState("initial");
   const [message, setMessage] = useState("");
 
+  const [winingState, setWiningState] = useState("initial");
+
   const { refetch: refetchBalance } = useCurrentUser();
-  const [betAmount, setBetAmount] = useState(0);
+  const [betAmount, setBetAmount] = useState(100);
 
   const { mutate, data, reset } = useMutation({
     mutationFn: postBlackjack,
     onSuccess: ({ success, message, winnings }) => {
       if (!success) {
         alert(message);
-        playAgain();
+        startGame();
         return;
       }
       refetchBalance();
-      setMessage(`You won: ${winnings}`);
+      if (winnings > 0) {
+        setMessage(`You won: ${winnings}$`);
+        console.log(`You won: ${winnings}$`);
+      }
+      if (winnings < 0) {
+        setMessage(`You lost: ${winnings}$`);
+        console.log(`You lost: ${winnings}$`);
+      }
+      if (winnings === 0) {
+        setMessage(`You tied: ${winnings}$`);
+        console.log(`You tied: ${winnings}$`);
+      }
     },
   });
-  const winnings = data?.winnings;
 
   const startGame = () => {
     setGameState("initial");
@@ -166,8 +179,6 @@ export default function Blackjack2() {
     setDealerScore(0);
     setPlayerAceCount(0);
     setDealerAceCount(0);
-
-    mutate({ betAmount }); // nåt
   };
 
   const dealCardInitial = (array) => {
@@ -226,13 +237,15 @@ export default function Blackjack2() {
         setDealerHand([dealerCard1.card, dealerCard2.card]);
         setGameState("gameOver");
         setMessage("Push!");
+        setWiningState("push");
         // 1 utdelning
       } else {
         setDealerHand([dealerCard1.card, dealerCard2.card]);
         setDealerScore(dealerCard1.value + dealerCard2.value);
         setGameState("gameOver");
         setMessage("Blackjack!");
-        // 3 utdelningar
+        setWiningState("win");
+        // 2 utdelningar
       }
     } else {
       setDealerHand([dealerCard1.card]);
@@ -257,6 +270,7 @@ export default function Blackjack2() {
     if (newPlayerScore > 21) {
       setGameState("gameOver");
       setMessage("Player busts! Dealer wins!");
+      setWiningState("lose");
       // 0 utdelning
     }
   };
@@ -295,18 +309,21 @@ export default function Blackjack2() {
     if (dealerHitScore > 21) {
       setGameState("gameOver");
       setMessage("Dealer busts! Player wins!");
+      setWiningState("win");
       // 2 utdelning
     }
 
     if (dealerHitScore < playerScore) {
       setGameState("gameOver");
       setMessage("Player wins!");
+      setWiningState("win");
       // 2 utdelning
     }
 
     if (dealerHitScore <= 21 && dealerHitScore > playerScore) {
       setGameState("gameOver");
       setMessage("Dealer wins!");
+      setWiningState("lose");
       // 0 utdelningar
     }
 
@@ -317,6 +334,7 @@ export default function Blackjack2() {
     ) {
       setGameState("gameOver");
       setMessage("Push!");
+      setWiningState("push");
       // 1 utdelningar
     }
 
@@ -327,6 +345,7 @@ export default function Blackjack2() {
     ) {
       setGameState("gameOver");
       setMessage("Dealer wins with blackjack!");
+      setWiningState("lose");
       // 0 utdelningar
     }
   };
@@ -354,13 +373,12 @@ export default function Blackjack2() {
     <div>
       <h1 id="unusedh1">BlackJack2.0</h1>
       <h2 id="soft17">Soft 17</h2>
+
       <div className="content-container-blackjack">
         {gameState !== "initial" ? (
           <div className="hand-container">
             <div>
-              <h2 id="dealer-hand">
-                Dealer Hand: {dealerScore} :: {dealerAceCount}
-              </h2>
+              <h2 id="dealer-hand">Dealer Hand: {dealerScore}</h2>
               <div className="card-container">
                 {dealerHand.map((card, index) => (
                   <div key={index} className="card">
@@ -370,9 +388,7 @@ export default function Blackjack2() {
               </div>
             </div>
             <div>
-              <h2 id="player-hand">
-                Player Hand: {playerScore} :: {playerAceCount}
-              </h2>
+              <h2 id="player-hand">Player Hand: {playerScore}</h2>
               <div className="card-container">
                 {playerHand.map((card, index) => (
                   <div key={index} className="card">
@@ -389,15 +405,15 @@ export default function Blackjack2() {
               type="number"
               id="betAmount"
               value={betAmount}
+              step={100}
               onChange={(e) => setBetAmount(e.target.value)}
             />
             <br />
-            <button onClick={initialDeal}>deal Cards</button>
           </div>
         )}
         <div className="button-container">
           {gameState === "initial" && (
-            <button onClick={initialDeal}>Deal Cards</button>
+            <button onClick={initialDeal}>Start Game</button>
           )}
           {gameState === "playing-initialDeal" && (
             <>
@@ -407,17 +423,21 @@ export default function Blackjack2() {
           )}
           {gameState === "gameOver" && (
             <div>
-              <p>Du van: 1111(något)</p>
-              <button onClick={startGame}>Play Again</button>
+              <button
+                onClick={() => {
+                  mutate({ betAmount, winingState });
+                  startGame();
+                }}
+              >
+                Play Again
+              </button>
             </div>
           )}
         </div>
         <div className="message-container">
-          <p>{gameState}</p>
           <p>{message}</p>
         </div>
       </div>
     </div>
   );
 }
-// Fixa gamestate, message och vinnarvilkor!

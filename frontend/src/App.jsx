@@ -3,7 +3,6 @@ import "./Styles/App.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Blackjack from "./Pages/blackjack";
-import Blackjack2 from "./Pages/blackjack2.0";
 import CaseUnbox from "./Pages/caseUnbox";
 import Coinflip from "./Pages/coinflip";
 import Dailybonus from "./Pages/dailybonus";
@@ -24,7 +23,6 @@ function GameRouter() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/blackjack" element={<Blackjack />} />
-        <Route path="/blackjack2.0" element={<Blackjack2 />} />
         <Route path="/coinflip" element={<Coinflip />} />
         <Route path="/dailybonus" element={<Dailybonus />} />
         <Route path="/caseUnbox" element={<CaseUnbox />} />

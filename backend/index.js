@@ -25,52 +25,49 @@ app.use(
 
 app.use(authMiddleware);
 
-// ------ Test
-app.post("/game/test", async (req, res) => {
+app.post("/game/blackjack", async (req, res) => {
   const user = req.user;
-  if (!user) return res.status(401).json({ message: "Unauthorized" });
 
   const body = req.body;
   const betAmount = body.betAmount;
+  const result = body.winingState;
 
-  console.log(
-    `Bet amount: ${betAmount} Balance: ${user.balance}`
-  );
-
-  if (betAmount > user.balance)
-    return res
-      .status(400)
-      .json({ message: "Insufficient balance", success: false });
-
-  const winnings = betAmount;
-
-  await addUserBalance(user.id, winnings);
-
-  res.json({
-    success: true,
-    winnings,
-  });
-});
-// ------
-
-app.post("/game/blackjack", async (req, res) => {
-  const { betAmount } = req.body;
+  console.log(result);
+  
   if (!user) return res.status(401).json({ message: "Unauthorized" });
 
   if (betAmount > user.balance) {
     return res.status(400).json({ message: "Inte tillräckligt med saldo", success: false });
   }
 
-  const result = "win"; // Assume a win for testing purposes
-  const winnings = betAmount * 2; // Double the bet amount for winning
+  if (result === "win") {
+    const winnings = betAmount * 2;
+    await addUserBalance(user.id, winnings);
+    res.json({
+      success: true,
+      result,
+      winnings,
+    });
+  }
+  if (result === "lose") {
+    const winnings = -betAmount;
+    await addUserBalance(user.id, winnings);
+    res.json({
+      success: true,
+      result,
+      winnings,
+    });
+  }
 
-  await addUserBalance(user.id, winnings);
-
-  res.json({
-    success: true,
-    result,
-    winnings,
-  });
+  if (result === "push") {
+    const winnings = 0;
+    await addUserBalance(user.id, winnings);
+    res.json({
+      success: true,
+      result,
+      winnings,
+    });
+  }
 });
 
 app.post("/game/coinflip", async (req, res) => {
