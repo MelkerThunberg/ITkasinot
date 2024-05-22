@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../Styles/blackjack.css";
-import Navbar from "../components/navbar.jsx";
 
 import card2Clubs from "../../resources/English_pattern_2_of_clubs.svg.png";
 import card2Diamonds from "../../resources/English_pattern_2_of_diamonds.svg.png";
@@ -55,402 +54,388 @@ import cardAceDiamonds from "../../resources/English_pattern_ace_of_diamonds.svg
 import cardAceHearts from "../../resources/English_pattern_ace_of_hearts.svg.png";
 import cardAceSpades from "../../resources/English_pattern_ace_of_spades.svg.png";
 
-export default function Blackjack() {
+import { useCurrentUser } from "../hooks/useCurrentUser";
+import { useMutation } from "@tanstack/react-query";
+
+const postBlackjack = ({ betAmount, winingState }) =>
+  fetch("http://localhost:4000/game/blackjack", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      betAmount,
+      winingState,
+    }),
+    credentials: "include",
+  }).then((res) => res.json());
+
+export default function Blackjack2() {
+  const [fullDeck, setFullDeck] = useState([
+    { card: "2♥︎", value: 2, image: card2Hearts },
+    { card: "3♥︎", value: 3, image: card3Hearts },
+    { card: "4♥︎", value: 4, image: card4Hearts },
+    { card: "5♥︎", value: 5, image: card5Hearts },
+    { card: "6♥︎", value: 6, image: card6Hearts },
+    { card: "7♥︎", value: 7, image: card7Hearts },
+    { card: "8♥︎", value: 8, image: card8Hearts },
+    { card: "9♥︎", value: 9, image: card9Hearts },
+    { card: "10♥︎", value: 10, image: card10Hearts },
+    { card: "J♥︎", value: 10, image: cardJackHearts },
+    { card: "Q♥︎", value: 10, image: cardQueenHearts },
+    { card: "K♥︎", value: 10, image: cardKingHearts },
+    { card: "A♥︎", value: 11, image: cardAceHearts },
+    { card: "2♠︎", value: 2, image: card2Spades },
+    { card: "3♠︎", value: 3, image: card3Spades },
+    { card: "4♠︎", value: 4, image: card4Spades },
+    { card: "5♠︎", value: 5, image: card5Spades },
+    { card: "6♠︎", value: 6, image: card6Spades },
+    { card: "7♠︎", value: 7, image: card7Spades },
+    { card: "8♠︎", value: 8, image: card8Spades },
+    { card: "9♠︎", value: 9, image: card9Spades },
+    { card: "10♠︎", value: 10, image: card10Spades },
+    { card: "J♠︎", value: 10, image: cardJackSpades },
+    { card: "Q♠︎", value: 10, image: cardQueenSpades },
+    { card: "K♠︎", value: 10, image: cardKingSpades },
+    { card: "A♠︎", value: 11, image: cardAceSpades },
+    { card: "2♣︎", value: 2, image: card2Clubs },
+    { card: "3♣︎", value: 3, image: card3Clubs },
+    { card: "4♣︎", value: 4, image: card4Clubs },
+    { card: "5♣︎", value: 5, image: card5Clubs },
+    { card: "6♣︎", value: 6, image: card6Clubs },
+    { card: "7♣︎", value: 7, image: card7Clubs },
+    { card: "8♣︎", value: 8, image: card8Clubs },
+    { card: "9♣︎", value: 9, image: card9Clubs },
+    { card: "10♣︎", value: 10, image: card10Clubs },
+    { card: "J♣︎", value: 10, image: cardJackClubs },
+    { card: "Q♣︎", value: 10, image: cardQueenClubs },
+    { card: "K♣︎", value: 10, image: cardKingClubs },
+    { card: "A♣︎", value: 11, image: cardAceClubs },
+    { card: "2♦︎", value: 2, image: card2Diamonds },
+    { card: "3♦︎", value: 3, image: card3Diamonds },
+    { card: "4♦︎", value: 4, image: card4Diamonds },
+    { card: "5♦︎", value: 5, image: card5Diamonds },
+    { card: "6♦︎", value: 6, image: card6Diamonds },
+    { card: "7♦︎", value: 7, image: card7Diamonds },
+    { card: "8♦︎", value: 8, image: card8Diamonds },
+    { card: "9♦︎", value: 9, image: card9Diamonds },
+    { card: "10♦︎", value: 10, image: card10Diamonds },
+    { card: "J♦︎", value: 10, image: cardJackDiamonds },
+    { card: "Q♦︎", value: 10, image: cardQueenDiamonds },
+    { card: "K♦︎", value: 10, image: cardKingDiamonds },
+    { card: "A♦︎", value: 11, image: cardAceDiamonds },
+  ]);
+
+  const [deck, setDeck] = useState([]);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
-  const [hiddenDealerCard, setHiddenDealerCard] = useState([]);
+
   const [playerScore, setPlayerScore] = useState(0);
   const [dealerScore, setDealerScore] = useState(0);
-  const [hiddenDealerCardValue, setHiddenDealerCardValue] = useState(0);
-  const [message, setMessage] = useState("");
-  const [dealerImageHand, setDealerImageHand] = useState([]);
-  const [playerImageHand, setPlayerImageHand] = useState([]);
-  const [hiddenDealerCardImage, setHiddenDealerCardImage] = useState();
-  const [gameOver, setGameOver] = useState(false);
 
-  // Ace calculation test
   const [playerAceCount, setPlayerAceCount] = useState(0);
   const [dealerAceCount, setDealerAceCount] = useState(0);
 
-  const [deck, setDeck] = useState([
-    { value: "2♥︎", image: card2Hearts },
-    { value: "3♥︎", image: card3Hearts },
-    { value: "4♥︎", image: card4Hearts },
-    { value: "5♥︎", image: card5Hearts },
-    { value: "6♥︎", image: card6Hearts },
-    { value: "7♥︎", image: card7Hearts },
-    { value: "8♥︎", image: card8Hearts },
-    { value: "9♥︎", image: card9Hearts },
-    { value: "10♥︎", image: card10Hearts },
-    { value: "J♥︎", image: cardJackHearts },
-    { value: "Q♥︎", image: cardQueenHearts },
-    { value: "K♥︎", image: cardKingHearts },
-    { value: "A♥︎", image: cardAceHearts },
-    { value: "2♠︎", image: card2Spades },
-    { value: "3♠︎", image: card3Spades },
-    { value: "4♠︎", image: card4Spades },
-    { value: "5♠︎", image: card5Spades },
-    { value: "6♠︎", image: card6Spades },
-    { value: "7♠︎", image: card7Spades },
-    { value: "8♠︎", image: card8Spades },
-    { value: "9♠︎", image: card9Spades },
-    { value: "10♠︎", image: card10Spades },
-    { value: "J♠︎", image: cardJackSpades },
-    { value: "Q♠︎", image: cardQueenSpades },
-    { value: "K♠︎", image: cardKingSpades },
-    { value: "A♠︎", image: cardAceSpades },
-    { value: "2♣︎", image: card2Clubs },
-    { value: "3♣︎", image: card3Clubs },
-    { value: "4♣︎", image: card4Clubs },
-    { value: "5♣︎", image: card5Clubs },
-    { value: "6♣︎", image: card6Clubs },
-    { value: "7♣︎", image: card7Clubs },
-    { value: "8♣︎", image: card8Clubs },
-    { value: "9♣︎", image: card9Clubs },
-    { value: "10♣︎", image: card10Clubs },
-    { value: "J♣︎", image: cardJackClubs },     // Alla värde på 10 blir denna -kanske inte!
-    { value: "Q♣︎", image: cardQueenClubs },
-    { value: "K♣︎", image: cardKingClubs },
-    { value: "A♣︎", image: cardAceClubs },
-    { value: "2♦︎", image: card2Diamonds },
-    { value: "3♦︎", image: card3Diamonds },
-    { value: "4♦︎", image: card4Diamonds },
-    { value: "5♦︎", image: card5Diamonds },
-    { value: "6♦︎", image: card6Diamonds },
-    { value: "7♦︎", image: card7Diamonds },   
-    { value: "8♦︎", image: card8Diamonds },
-    { value: "9♦︎", image: card9Diamonds },
-    { value: "10♦︎", image: card10Diamonds },
-    { value: "J♦︎", image: cardJackDiamonds },
-    { value: "Q♦︎", image: cardQueenDiamonds },
-    { value: "K♦︎", image: cardKingDiamonds },
-    { value: "A♦︎", image: cardAceDiamonds },
-  ]);
+  const [hiddenCard, setHiddenCard] = useState();
 
-  useEffect(() => {
-    if (gameOver) {
-      setPlayerAceCount(0);
-    }
-  }, [gameOver]);
+  const [gameState, setGameState] = useState("initial");
+  const [message, setMessage] = useState("");
 
-  const countCardValue = (card /*, currentScore*/) => {
-    const value = card.value;
+  const [winingState, setWiningState] = useState("initial");
 
-    if (
-      value === "A♥︎" ||
-      value === "A♠︎" ||
-      value === "A♣︎" ||
-      value === "A♦︎"
-    ) {
-      return 11;
-    }
-    if (
-      value === "J♥︎" ||
-      value === "J♠︎" ||
-      value === "J♣︎" ||
-      value === "J♦︎" ||
-      value === "Q♥︎" ||
-      value === "Q♠︎" ||
-      value === "Q♣︎" ||
-      value === "Q♦︎" ||
-      value === "K♥︎" ||
-      value === "K♠︎" ||
-      value === "K♣︎" ||
-      value === "K♦︎" ||
-      value === "10♥︎" ||
-      value === "10♠︎" ||
-      value === "10♣︎" ||
-      value === "10♦︎"
-    ) {
-      return 10;
-    }
-    if (
-      value === "9♥︎" ||
-      value === "9♠︎" ||
-      value === "9♣︎" ||
-      value === "9♦︎"
-    ) {
-      return 9;
-    }
-    if (
-      value === "8♥︎" ||
-      value === "8♠︎" ||
-      value === "8♣︎" ||
-      value === "8♦︎"
-    ) {
-      return 8;
-    }
-    if (
-      value === "7♥︎" ||
-      value === "7♠︎" ||
-      value === "7♣︎" ||
-      value === "7♦︎"
-    ) {
-      return 7;
-    }
-    if (
-      value === "6♥︎" ||
-      value === "6♠︎" ||
-      value === "6♣︎" ||
-      value === "6♦︎"
-    ) {
-      return 6;
-    }
-    if (
-      value === "5♥︎" ||
-      value === "5♠︎" ||
-      value === "5♣︎" ||
-      value === "5♦︎"
-    ) {
-      return 5;
-    }
-    if (
-      value === "4♥︎" ||
-      value === "4♠︎" ||
-      value === "4♣︎" ||
-      value === "4♦︎"
-    ) {
-      return 4;
-    }
-    if (
-      value === "3♥︎" ||
-      value === "3♠︎" ||
-      value === "3♣︎" ||
-      value === "3♦︎"
-    ) {
-      return 3;
-    }
-    if (
-      value === "2♥︎" ||
-      value === "2♠︎" ||
-      value === "2♣︎" ||
-      value === "2♦︎"
-    ) {
-      return 2;
-    }
-  };
+  const { refetch: refetchBalance } = useCurrentUser();
+  const [betAmount, setBetAmount] = useState(100);
 
-  const reducePlayerAce = (playerScore, playerAceCount) => {
-    while (playerScore > 21 && playerAceCount > 0) {
-      setPlayerScore(playerScore - 10);
-      setPlayerAceCount(playerAceCount - 1);
-  }
-  }
-  const reduceDealerAce = (dealerScore, dealerAceCount) => {
-    while (dealerScore > 21 && dealerAceCount > 0) {
-      setDealerScore(dealerScore - 10);
-      setDealerAceCount(dealerAceCount - 1);
-  }
-  }
+  const { mutate, data, reset } = useMutation({
+    mutationFn: postBlackjack,
+    onSuccess: ({ success, message, winnings }) => {
+      if (!success) {
+        alert(message);
+        startGame();
+        return;
+      }
+      refetchBalance();
+      if (winnings > 0) {
+        setMessage(`You won: ${winnings}$`);
+        console.log(`You won: ${winnings}$`);
+      }
+      if (winnings < 0) {
+        setMessage(`You lost: ${winnings}$`);
+        console.log(`You lost: ${winnings}$`);
+      }
+      if (winnings === 0) {
+        setMessage(`You tied: ${winnings}$`);
+        console.log(`You tied: ${winnings}$`);
+      }
+    },
+  });
 
-  const dealDeck = (array) => {
-
-    let random = Math.floor(Math.random() * array.length);
-    let card = array[random];
-    array.splice(random, 1);
-    let cardValue = countCardValue(card);
-    console.log(array.length);
-    return { card: card.value, cardValue: cardValue, image: card.image };
-  };
-
-  const showhiddenDealerCard = () => {
-    setDealerHand([...dealerHand, hiddenDealerCard]);
-    setDealerScore(dealerScore + hiddenDealerCardValue);
-    setDealerImageHand([...dealerImageHand, hiddenDealerCardImage]);
-  };
-
-  const dealCards = () => {
-    setDealerAceCount(0);
+  const startGame = () => {
+    setGameState("initial");
+    setMessage("");
+    setPlayerHand([]);
+    setDealerHand([]);
+    setPlayerScore(0);
+    setDealerScore(0);
     setPlayerAceCount(0);
-    const playerCard1 = dealDeck([...deck]);
-    const dealerCard1 = dealDeck([...deck]);
-    const playerCard2 = dealDeck([...deck]);
-    const dealerCard2 = dealDeck([...deck]);
+    setDealerAceCount(0);
+  };
 
-    if (
-      playerCard1.card === "A♠︎" ||
-      playerCard1.card === "A♣︎" ||
-      playerCard1.card === "A♦︎" ||
-      playerCard1.card === "A♥︎" ||
-      playerCard2.card === "A♠︎" ||
-      playerCard2.card === "A♣︎" ||
-      playerCard2.card === "A♦︎" ||
-      playerCard2.card === "A♥︎"
-    ) {
-      setPlayerAceCount(playerAceCount + 1);
-    }
-    if (
-      dealerCard1.card === "A♠︎" ||
-      dealerCard1.card === "A♣︎" ||
-      dealerCard1.card === "A♦︎" ||
-      dealerCard1.card === "A♥︎" ||
-      dealerCard2.card === "A♠︎" ||
-      dealerCard2.card === "A♣︎" ||
-      dealerCard2.card === "A♦︎" ||
-      dealerCard2.card === "A♥︎"
-    ) {
-      setDealerAceCount(dealerAceCount + 1);
-    }
-    const playerScore = playerCard1.cardValue + playerCard2.cardValue;
-    const dealerScore = dealerCard1.cardValue + dealerCard2.cardValue;
-    const dealerImage = dealerCard1.image;
-    const playerImage = [playerCard1.image, playerCard2.image];
+  const dealCardInitial = (array) => {
+    let random = Math.floor(Math.random() * array.length);
+    let pickedCard = array[random];
+    array.splice(random, 1);
+    // console.log(pickedCard.card + "   Card left:   " + array.length); // Prints card value and card
+    return { card: pickedCard, value: pickedCard.value, array: array };
+  };
 
-    setPlayerHand([playerCard1.card, playerCard2.card]);
-    setPlayerScore(playerScore);
-    setPlayerImageHand(playerImage);
+  const dealCard = () => {
+    let array = [...deck];
+    let random = Math.floor(Math.random() * deck.length);
+    let card = deck[random];
+    array.splice(random, 1);
+    setDeck(array);
+    console.log(card.card + "   Card left:   " + deck.length); // Prints card value and card
+    return card;
+  };
 
-    setDealerHand([dealerCard1.card]);
-    setDealerScore(dealerCard1.cardValue);
-    setDealerImageHand([dealerImage]);
-
-    setHiddenDealerCard(dealerCard2.card);
-    setHiddenDealerCardValue(dealerCard2.cardValue);
-    setHiddenDealerCardImage(dealerCard2.image);
-
-    setGameOver(false);
+  const initialDeal = () => {
+    setGameState("playing-initialDeal");
     setMessage("");
 
-    if (playerScore === 21) {
-      showhiddenDealerCard();
+    let tempDeck = [...fullDeck];
 
-      if (dealerScore === 21) {
+    setPlayerAceCount(0);
+    setDealerAceCount(0);
+
+    const playerCard1 = dealCardInitial(tempDeck);
+    tempDeck = playerCard1.array;
+    checkPlayerAce(playerCard1);
+
+    const playerCard2 = dealCardInitial(tempDeck);
+    tempDeck = playerCard2.array;
+
+    checkPlayerAce(playerCard2);
+
+    setPlayerHand([playerCard1.card, playerCard2.card]);
+    const initialPlayerScore = playerCard1.value + playerCard2.value;
+    setPlayerScore(initialPlayerScore);
+
+    const dealerCard1 = dealCardInitial(tempDeck);
+    tempDeck = dealerCard1.array;
+
+    checkDealerAce(dealerCard1);
+
+    const dealerCard2 = dealCardInitial(tempDeck);
+    tempDeck = dealerCard2.array;
+
+    setDeck(tempDeck);
+    setHiddenCard(dealerCard2.card);
+
+    if (initialPlayerScore === 21) {
+      if (dealerCard1.value + dealerCard2.value === 21) {
+        setDealerHand([dealerCard1.card, dealerCard2.card]);
+        setGameState("gameOver");
         setMessage("Push!");
-        setGameOver(true);
+        setWiningState("push");
+        // 1 utdelning
       } else {
-        setMessage("Blackjack! Player wins!");
-        setGameOver(true);
+        setDealerHand([dealerCard1.card, dealerCard2.card]);
+        setDealerScore(dealerCard1.value + dealerCard2.value);
+        setGameState("gameOver");
+        setMessage("Blackjack!");
+        setWiningState("win");
+        // 2 utdelningar
       }
+    } else {
+      setDealerHand([dealerCard1.card]);
+      setDealerScore(dealerCard1.value);
     }
   };
 
   const hit = () => {
-    const newCard = dealDeck(deck);
-    setPlayerHand([...playerHand, newCard.card]);
-    const newScore = playerScore + newCard.cardValue;
-    setPlayerScore(newScore);
+    const newCard = dealCard();
+    let newPlayerScore = playerScore + newCard.value;
+    let newPlayerAceCount = playerAceCount + (newCard.value === 11 ? 1 : 0);
 
-    setPlayerImageHand([...playerImageHand, newCard.image]);
+    ({ score: newPlayerScore, aceCount: newPlayerAceCount } = updateScore(
+      newPlayerScore,
+      newPlayerAceCount
+    ));
 
-    reducePlayerAce();
+    setPlayerHand([...playerHand, newCard]);
+    setPlayerScore(newPlayerScore);
+    setPlayerAceCount(newPlayerAceCount);
 
-    if (newScore > 21) { // Borde va rätt
+    if (newPlayerScore > 21) {
+      setGameState("gameOver");
       setMessage("Player busts! Dealer wins!");
-      gameOverFunc()
-
-
-      // Ta bort insatsen
-    }
-    if (newScore === 21) {
-      stand();
+      setWiningState("lose");
+      // 0 utdelning
     }
   };
-
-  // När spelaren får 20 och stannar så drar dealern ett till kort när den har Knäckt och 9a gömd (19) samma på (18).
-  // Borde stanna eftersom den har över 17
-  // När både spelaren och dealern får samma fungerar det
-  // Blir push
-
-  // När spelaren får 21 genom 2a, J, 9 så stannar spelaren då har dealern 4a, Q, 4a men sedan vinner dealern FEL????
-
-  // När spelaren får 21 och dealern bj så vinner dealern RÄTT!!
-
-  // Dealern plockar ett till kort när den redan har högre värde än spelaren troligtviss pga det är under 17 dealern(16) spelaren(14)
-
-  // Dealer plockar kort fast den har över 17 när spelaren har 20
-
-  // Bugg med vissar samma kort flera gånger kommer ibland
-  // Tar inte bort kort från leken på rätt sätt och åtterställs eller inte leken
 
   const stand = () => {
-    showhiddenDealerCard();
-    reduceDealerAce();
+    const updatedDealerHand = [...dealerHand, hiddenCard];
 
-    let newScore = dealerScore;
+    let dealerHitScore = dealerScore + hiddenCard.value;
+    let dealerHitsAceCount =
+      hiddenCard.value === 11 ? dealerAceCount + 1 : dealerAceCount;
 
-    const updatedDealerHand = [...dealerHand];
-    const updatedDealerHandImage = [...dealerImageHand];
+    ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateScore(
+      dealerHitScore,
+      dealerHitsAceCount
+    ));
 
-    while (newScore < 17 || (newScore < playerScore && newScore <= 21)) {
-      const newCard = dealDeck(deck);
-      updatedDealerHand.push(newCard.card);
-      reduceDealerAce();
-      updatedDealerHandImage.push(newCard.image);
-      setDealerHand(updatedDealerHand);
-      setDealerImageHand(updatedDealerHandImage);
+    while (dealerHitScore < 17) {
+      const newCard = dealCard();
+      updatedDealerHand.push(newCard);
 
-      newScore += newCard.cardValue;
+      dealerHitScore += newCard.value;
+      if (newCard.value === 11) {
+        dealerHitsAceCount++;
+      }
+
+      ({ score: dealerHitScore, aceCount: dealerHitsAceCount } = updateScore(
+        dealerHitScore,
+        dealerHitsAceCount
+      ));
     }
+
     setDealerHand(updatedDealerHand);
-    setDealerScore(newScore);
+    setDealerScore(dealerHitScore);
+    setDealerAceCount(dealerHitsAceCount);
 
-    // När spelaren får 21 och sedan dealern också får 21 så vinner dealern FEL!
-    if (newScore > 21) {    // Borde va rätt
+    if (dealerHitScore > 21) {
+      setGameState("gameOver");
       setMessage("Dealer busts! Player wins!");
-      gameOverFunc()
+      setWiningState("win");
+      // 2 utdelning
+    }
 
-    } else if (playerScore > newScore) {
+    if (dealerHitScore < playerScore) {
+      setGameState("gameOver");
       setMessage("Player wins!");
-      // setMessage("Dealer wins!");
+      setWiningState("win");
+      // 2 utdelning
+    }
 
-      gameOverFunc()
-
-    } else if (playerScore < newScore) {
+    if (dealerHitScore <= 21 && dealerHitScore > playerScore) {
+      setGameState("gameOver");
       setMessage("Dealer wins!");
-      // setMessage("Player wins!");
-      gameOverFunc()
+      setWiningState("lose");
+      // 0 utdelningar
+    }
 
-    } else if (newScore === playerScore) {  // Fungerar nog inte
+    if (
+      dealerHitScore !== 21 &&
+      updatedDealerHand.length !== 2 &&
+      playerScore === dealerHitScore
+    ) {
+      setGameState("gameOver");
       setMessage("Push!");
-      gameOverFunc()
+      setWiningState("push");
+      // 1 utdelningar
+    }
+
+    if (
+      dealerHitScore === 21 &&
+      updatedDealerHand.length === 2 &&
+      playerScore === 21
+    ) {
+      setGameState("gameOver");
+      setMessage("Dealer wins with blackjack!");
+      setWiningState("lose");
+      // 0 utdelningar
     }
   };
-  const gameOverFunc = () =>  {
-    setGameOver(true);
-    setDealerAceCount(0);
-    setPlayerAceCount(0);
-  }
-  
+
+  const checkPlayerAce = (card) => {
+    if (card.value === 11) {
+      setPlayerAceCount(playerAceCount + 1);
+    }
+  };
+
+  const checkDealerAce = (card) => {
+    if (card.value === 11) {
+      setDealerAceCount(dealerAceCount + 1);
+    }
+  };
+  const updateScore = (score, aceCount) => {
+    while (score > 21 && aceCount > 0) {
+      score -= 10;
+      aceCount--;
+    }
+    return { score, aceCount };
+  };
 
   return (
     <div>
+      <h1 id="unusedh1">BlackJack2.0</h1>
+      <h2 id="soft17">Soft 17</h2>
+
       <div className="content-container-blackjack">
+        {gameState !== "initial" ? (
+          <div className="hand-container">
+            <div>
+              <h2 id="dealer-hand">Dealer Hand: {dealerScore}</h2>
+              <div className="card-container">
+                {dealerHand.map((card, index) => (
+                  <div key={index} className="card">
+                    <img src={card.image} alt={`Dealer Card ${index}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h2 id="player-hand">Player Hand: {playerScore}</h2>
+              <div className="card-container">
+                {playerHand.map((card, index) => (
+                  <div key={index} className="card">
+                    <img src={card.image} alt={`Player Card ${index}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bet-container">
+            <label htmlFor="betAmount"> Bet Amount: </label>
+            <input
+              type="number"
+              id="betAmount"
+              value={betAmount}
+              step={100}
+              onChange={(e) => setBetAmount(e.target.value)}
+            />
+            <br />
+          </div>
+        )}
         <div className="button-container">
-          <button onClick={dealCards}>Deal Cards</button>
-          <button onClick={hit} disabled={gameOver}>
-            Hit
-          </button>
-          <button onClick={stand} disabled={gameOver}>
-            Stand
-          </button>
-        </div>
-        <div>
-          <h2 id="player-hand">Player Hand: {playerScore} :: {playerAceCount}</h2>
-          <div className="card-container">
-            {playerImageHand.map((image, index) => (
-              <div key={index} className="card">
-                <img src={image} alt={`Player Card ${index}`} />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h2 id="dealer-hand">Dealer Hand: {dealerScore} :: {dealerAceCount}</h2>
-          <div className="card-container">
-            {dealerImageHand.map((image, index) => (
-              <div key={index} className="card">
-                <img src={image} alt={`Dealer Card ${index}`} />
-              </div>
-            ))}
-          </div>
+          {gameState === "initial" && (
+            <button onClick={initialDeal}>Start Game</button>
+          )}
+          {gameState === "playing-initialDeal" && (
+            <>
+              <button onClick={hit}>Hit</button>
+              <button onClick={stand}>Stand</button>
+            </>
+          )}
+          {gameState === "gameOver" && (
+            <div>
+              <button
+                onClick={() => {
+                  mutate({ betAmount, winingState });
+                  startGame();
+                }}
+              >
+                Play Again
+              </button>
+            </div>
+          )}
         </div>
         <div className="message-container">
           <p>{message}</p>
-          {message && (
-            <button onClick={dealCards} id="deal-again">
-              Deal Again
-            </button>
-          )}
         </div>
       </div>
     </div>

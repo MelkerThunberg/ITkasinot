@@ -7,6 +7,7 @@
 #player-hand, #dealer-hand {
   text-align: center;
 }
+
 .card {
   margin-right: 10px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -19,7 +20,7 @@
 }
 
 .button-container {
-  margin-top: 40px;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
 }
@@ -50,4 +51,27 @@
   text-align: center;
 }
 
+.bet-container {
+  text-align: center;
+  margin-top: 20px;
+}
 
+.bet-container label {
+  display: block;
+  margin-top: 10px;
+}
+
+#betAmount {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+#betAmount:focus {
+  border-color: #4caf50;
+  outline: none;
+}
