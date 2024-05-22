@@ -240,7 +240,3 @@ app.post('/game/dailybonus', (req, res) => {
 
   return res.json({ message: 'Daily bonus claimed! You received $10.' });
 });
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
