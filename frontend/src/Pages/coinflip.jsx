@@ -48,7 +48,7 @@ export default function Coinflip() {
   const winnings = data?.winnings;
 
   return (
-    <div>
+    <div className="coinflip-container">
       <div></div>
       <h1 id="unusedh1">Coin flip</h1>
 
