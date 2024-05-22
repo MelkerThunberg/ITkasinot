@@ -60,7 +60,7 @@ export default function Coinflip() {
           <h3 style={{ color: winnings > 0 ? "green" : "red" }}>
             {winnings !== 0 && `Winnings: ${winnings}`}
           </h3>
-          <div class="container">
+          <div className="container">
           {gifSrc && <img src={gifSrc} alt={result} />}
           </div>
         </>
