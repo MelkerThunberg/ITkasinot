@@ -25,52 +25,49 @@ app.use(
 
 app.use(authMiddleware);
 
-// ------ Test
-app.post("/game/test", async (req, res) => {
+app.post("/game/blackjack", async (req, res) => {
   const user = req.user;
-  if (!user) return res.status(401).json({ message: "Unauthorized" });
 
   const body = req.body;
   const betAmount = body.betAmount;
+  const result = body.winingState;
 
-  console.log(
-    `Bet amount: ${betAmount} Balance: ${user.balance}`
-  );
-
-  if (betAmount > user.balance)
-    return res
-      .status(400)
-      .json({ message: "Insufficient balance", success: false });
-
-  const winnings = betAmount;
-
-  await addUserBalance(user.id, winnings);
-
-  res.json({
-    success: true,
-    winnings,
-  });
-});
-// ------
-
-app.post("/game/blackjack", async (req, res) => {
-  const { betAmount } = req.body;
+  console.log(result);
+  
   if (!user) return res.status(401).json({ message: "Unauthorized" });
 
   if (betAmount > user.balance) {
     return res.status(400).json({ message: "Inte tillräckligt med saldo", success: false });
   }
 
-  const result = "win"; // Assume a win for testing purposes
-  const winnings = betAmount * 2; // Double the bet amount for winning
+  if (result === "win") {
+    const winnings = betAmount * 2;
+    await addUserBalance(user.id, winnings);
+    res.json({
+      success: true,
+      result,
+      winnings,
+    });
+  }
+  if (result === "lose") {
+    const winnings = -betAmount;
+    await addUserBalance(user.id, winnings);
+    res.json({
+      success: true,
+      result,
+      winnings,
+    });
+  }
 
-  await addUserBalance(user.id, winnings);
-
-  res.json({
-    success: true,
-    result,
-    winnings,
-  });
+  if (result === "push") {
+    const winnings = 0;
+    await addUserBalance(user.id, winnings);
+    res.json({
+      success: true,
+      result,
+      winnings,
+    });
+  }
 });
 
 app.post("/game/coinflip", async (req, res) => {
@@ -217,4 +214,33 @@ app.get("/auth/me", async (req, res) => {
 const port = 4000;
 app.listen(port, () => {
   console.log(`Server started on port http://localhost:${port}`);
+});
+
+app.post('/game/dailybonus', (req, res) => {
+  const { userId } = req.body;
+
+  // Find the user by userId
+  const user = users.find(u => u.id === userId);
+
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const claimCooldown = 10 * 60 * 1000; // 10 minutes in milliseconds
+  const lastClaimTimestamp = user.lastClaimTimestamp || 0;
+
+  // Check if enough time has passed since the last claim
+  if (Date.now() - lastClaimTimestamp < claimCooldown) {
+    return res.status(400).json({ error: 'You can claim only once every 10 minutes.' });
+  }
+
+  // Update the user's balance with $10
+  user.balance += 10;
+  user.lastClaimTimestamp = Date.now();
+
+  return res.json({ message: 'Daily bonus claimed! You received $10.' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
