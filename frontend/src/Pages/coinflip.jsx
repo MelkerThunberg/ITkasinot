@@ -1,6 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCurrentUser } from "../hooks/useCurrentUser";
+import "../Styles/coinflip.css";
 
 const postCoinFlip = ({ betAmount, guess }) =>
   fetch("http://localhost:4000/game/coinflip", {
@@ -20,16 +21,19 @@ export default function Coinflip() {
 
   const [betAmount, setBetAmount] = useState(0);
   const [guess, setGuess] = useState("heads");
+  const [gifSrc, setGifSrc] = useState(null);
 
   const { mutate, data, reset } = useMutation({
     mutationFn: postCoinFlip,
-    onSuccess: ({ success, message }) => {
+    onSuccess: ({ success, message, result }) => {
       if (!success) {
         alert(message);
         playAgain();
         return;
       }
       refetchBalance();
+      // Set the appropriate GIF based on the result
+      setGifSrc(result === "heads" ? "../resources/heads.gif" : "../resources/tails.gif");
     },
   });
 
@@ -37,6 +41,7 @@ export default function Coinflip() {
     reset();
     setBetAmount(0);
     setGuess("heads");
+    setGifSrc(null); // Reset GIF source when playing again
   };
 
   const result = data?.result;
@@ -55,6 +60,9 @@ export default function Coinflip() {
           <h3 style={{ color: winnings > 0 ? "green" : "red" }}>
             {winnings !== 0 && `Winnings: ${winnings}`}
           </h3>
+          <div class="container">
+          {gifSrc && <img src={gifSrc} alt={result} />}
+          </div>
         </>
       )}
 
