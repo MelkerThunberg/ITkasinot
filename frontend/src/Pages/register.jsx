@@ -4,6 +4,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import "../Styles/login&register.css";
+
 const postRegister = ({ username, password }) =>
   fetch("http://localhost:4000/auth/register", {
     method: "POST",
@@ -34,7 +36,7 @@ export default function Register() {
   });
 
   return (
-    <div>
+    <div className="register-container">
       <h1>Registrera konto</h1>
       <Link to="/login">Logga in</Link>
       <br />
@@ -61,7 +63,9 @@ export default function Register() {
         }}
         value={password}
       />
-      <button onClick={() => mutate({ username, password })}>Registrera</button>
+      <button onClick={() => mutate({ username, password })}
+      className="register-form-button"
+      >Registrera</button>
     </div>
   );
 }

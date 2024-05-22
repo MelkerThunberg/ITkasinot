@@ -6,6 +6,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 
+import "../Styles/login&register.css";
+
 const postLogin = ({ username, password }) =>
   fetch("http://localhost:4000/auth/login", {
     method: "POST",
@@ -39,7 +41,7 @@ export default function Login() {
   });
 
   return (
-    <div>
+    <div className="login-container">
       <h1>Logga in</h1>
       <Link to="/register">Registrera konto</Link>
       <br />
