@@ -16,6 +16,7 @@
 
 .content-container-homepage {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 75vh;
@@ -23,4 +24,10 @@
 
 .content-container-homepage h1, .content-container-homepage h2 {
   text-align: center;
+}
+
+.content-container-homepage img {
+  display: inline-block;
+  width: 200px;
+  align-self: center;
 }

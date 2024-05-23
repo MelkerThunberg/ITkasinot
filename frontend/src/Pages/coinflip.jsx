@@ -33,7 +33,7 @@ export default function Coinflip() {
       }
       refetchBalance();
       // Set the appropriate GIF based on the result
-      setGifSrc(result === "heads" ? "../resources/heads.gif" : "../resources/tails.gif");
+      setGifSrc(result === "heads" ? `../resources/heads.gif?${Date.now()}` : `../resources/tails.gif?${Date.now()}`);
     },
   });
 

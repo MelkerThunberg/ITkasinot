@@ -5,6 +5,7 @@ export default function Home() {
   return (
     <div>
       <div className="content-container-homepage">
+      <img src="../resources/itKasinot.png" alt="welcome" />
         <div className="homepage-links">
           <h1>Välkommen till ItKasinot</h1>
           <h2>Välj vilket spel du vill spela nedanför!</h2>
