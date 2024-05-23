@@ -20,8 +20,12 @@
   position: relative;
   margin-top: 20px;
   overflow: hidden;
-  background: rgb(63,94,251);
-  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+  background: rgb(63, 94, 251);
+  background: radial-gradient(
+    circle,
+    rgba(63, 94, 251, 1) 0%,
+    rgba(252, 70, 107, 1) 100%
+  );
 }
 
 #case img {
@@ -64,4 +68,25 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
+}
+
+.CaseOpening button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.CaseOpening button:hover {
+  background-color: #45a049;
+}
+
+.CaseOpening button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

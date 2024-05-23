@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import "../Styles/dailybonus.css";
 import { useCurrentUser } from "../hooks/useCurrentUser.jsx";
 import { useMutation } from "@tanstack/react-query";
 
 const PostDailyBonus = () => {
+  /*
     fetch("http://localhost:4000/game/dailybonus", {
     method: "POST",
     headers: {
@@ -43,8 +45,9 @@ const PostDailyBonus = () => {
     }, 1000); 
     return () => clearInterval(timer);
   }, [lastClaimTimestamp, claimCooldown]);
-
+*/
   return (
+    /*
     <div className="daily-bonus-container">
       {claimed ? (
         <p>Daily bonus claimed! You received $10.</p>
@@ -54,7 +57,13 @@ const PostDailyBonus = () => {
         </button>
       )}
     </div>
+    */
+    <div>
+      <h1 id="unusedh1">Daglig Bonus</h1>
+    </div>
   );
 };
 
 export default PostDailyBonus;
+
+// Komenterade koden eftersom det gör så sidan krashar.

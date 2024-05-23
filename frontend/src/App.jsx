@@ -26,8 +26,10 @@ function GameRouter() {
         <Route path="/coinflip" element={<Coinflip />} />
         <Route path="/dailybonus" element={<Dailybonus />} />
         <Route path="/caseUnbox" element={<CaseUnbox />} />
-        <Route path="/plinko" element={<Plinko />} />
+        {/* 
+         <Route path="/plinko" element={<Plinko />} />
         <Route path="/roulette" element={<Roulette />} />
+        */}
       </Routes>
     </>
   );

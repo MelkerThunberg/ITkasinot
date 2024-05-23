@@ -24,12 +24,14 @@ export default function Navbar() {
           <li>
             <Link to="/caseUnbox">Öppna lådor</Link>
           </li>
+          {/*
           <li>
             <Link to="/roulette">Roulette</Link>
           </li>
           <li>
             <Link to="/plinko">Plinko</Link>
           </li>
+        */}
         </ul>
         <div className="balance">{user?.balance || 0}$</div>
         <div className="username">{user?.username}</div>

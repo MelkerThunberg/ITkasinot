@@ -18,5 +18,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 75vh;
+}
+
+.content-container-homepage h1, .content-container-homepage h2 {
+  text-align: center;
 }

@@ -73,6 +73,7 @@ export default function Coinflip() {
           <input
             type="number"
             value={betAmount}
+            step={100}
             onChange={(e) => setBetAmount(e.target.value)}
           />
           <br />
