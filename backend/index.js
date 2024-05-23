@@ -211,16 +211,11 @@ app.get("/auth/me", async (req, res) => {
   }
 });
 
-const port = 4000;
-app.listen(port, () => {
-  console.log(`Server started on port http://localhost:${port}`);
-});
 
 app.post('/game/dailybonus', (req, res) => {
-  const { userId } = req.body;
 
   // Find the user by userId
-  const user = users.find(u => u.id === userId);
+  const user = req.user;
 
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
@@ -235,8 +230,19 @@ app.post('/game/dailybonus', (req, res) => {
   }
 
   // Update the user's balance with $10
-  user.balance += 10;
+  user.balance += 100;
   user.lastClaimTimestamp = Date.now();
 
-  return res.json({ message: 'Daily bonus claimed! You received $10.' });
+
+  addUserBalance(user.id, winnings);
+
+  res.json({
+    success: true,
+  });
+
+});
+
+const port = 4000;
+app.listen(port, () => {
+  console.log(`Server started on port http://localhost:${port}`);
 });
