@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import "../Styles/coinflip.css";
 
@@ -21,7 +21,9 @@ export default function Coinflip() {
 
   const [betAmount, setBetAmount] = useState(0);
   const [guess, setGuess] = useState("heads");
-  const [gifSrc, setGifSrc] = useState(null);
+  const [result, setResult] = useState("");
+  const [showResult, setShowResult] = useState(false);
+  const [animationClass, setAnimationClass] = useState("");
 
   const { mutate, data, reset } = useMutation({
     mutationFn: postCoinFlip,
@@ -32,8 +34,12 @@ export default function Coinflip() {
         return;
       }
       refetchBalance();
-      // Set the appropriate GIF based on the result
-      setGifSrc(result === "heads" ? `../resources/heads.gif?${Date.now()}` : `../resources/tails.gif?${Date.now()}`);
+      setResult(result);
+      setAnimationClass(result === "heads" ? "heads" : "tails");
+
+      setTimeout(() => {
+        setShowResult(true); // Display the result text after animation finishes
+      }, 2000);
     },
   });
 
@@ -41,32 +47,35 @@ export default function Coinflip() {
     reset();
     setBetAmount(0);
     setGuess("heads");
-    setGifSrc(null); // Reset GIF source when playing again
+    setResult("");
+    setShowResult(false);
+    setAnimationClass(""); // Reset animation class
   };
-
-  const result = data?.result;
-  const winnings = data?.winnings;
 
   return (
     <div className="coinflip-container">
-      <div></div>
       <h1 id="unusedh1">Coin flip</h1>
 
-      {data && (
+      <div id="coin" className={animationClass} key={+new Date()}>
+        <div className="side-a">
+          <h2>TAIL</h2>
+        </div>
+        <div className="side-b">
+          <h2>HEAD</h2>
+        </div>
+      </div>
+
+      {showResult && data && (
         <>
           <h3 style={{ color: result === guess ? "green" : "red" }}>
             {result !== "" && `Result: ${result}`}
           </h3>
-          <h3 style={{ color: winnings > 0 ? "green" : "red" }}>
-            {winnings !== 0 && `Winnings: ${winnings}`}
+          <h3 style={{ color: data.winnings > 0 ? "green" : "red" }}>
+            {data.winnings !== 0 && `Winnings: ${data.winnings}`}
           </h3>
-          <div className="container">
-          {gifSrc && <img src={gifSrc} alt={result} />}
-          </div>
         </>
       )}
 
-      <br />
       {!data && (
         <>
           <label htmlFor="betAmount">Bet amount:</label>
@@ -85,7 +94,7 @@ export default function Coinflip() {
           </select>
           <br />
 
-          <button onClick={() => mutate({ betAmount, guess })}>
+          <button id="btn" onClick={() => mutate({ betAmount, guess })}>
             Flip coin
           </button>
         </>

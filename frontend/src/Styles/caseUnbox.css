@@ -4,6 +4,12 @@
   margin-top: 20px;
 }
 
+.reward-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width:fit-content;
+}
+
 .RewardsHeader {
   margin-top: 60px;
   margin-bottom: -80px;
