@@ -185,7 +185,6 @@ export default function Blackjack2() {
     let random = Math.floor(Math.random() * array.length);
     let pickedCard = array[random];
     array.splice(random, 1);
-    // console.log(pickedCard.card + "   Card left:   " + array.length); // Prints card value and card
     return { card: pickedCard, value: pickedCard.value, array: array };
   };
 
@@ -195,7 +194,7 @@ export default function Blackjack2() {
     let card = deck[random];
     array.splice(random, 1);
     setDeck(array);
-    console.log(card.card + "   Card left:   " + deck.length); // Prints card value and card
+    console.log(card.card + "   Card left:   " + deck.length);
     return card;
   };
 
