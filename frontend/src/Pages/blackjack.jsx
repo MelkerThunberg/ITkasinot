@@ -370,7 +370,7 @@ export default function Blackjack2() {
 
   return (
     <div>
-      <h1 id="unusedh1">BlackJack2.0</h1>
+      <h1 id="unusedh1">BlackJack</h1>
       <h2 id="soft17">Soft 17</h2>
 
       <div className="content-container-blackjack">
